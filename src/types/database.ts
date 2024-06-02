@@ -8,6 +8,9 @@ export type SpotifyBannedChatterTable = PublicSchema['spotify_banned_chatters'][
 export type SpotifySettingsTable = PublicSchema['spotify_settings']['Row']
 export type SpotifyBannedSongsTable = PublicSchema['spotify_banned_songs']['Row']
 export type TwitchIntegrationTable = PublicSchema['twitch_integration']['Row']
+export type OverlayTable = PublicSchema['overlays']['Row']
+export type OverlayWidgetTable = PublicSchema['overlay_widgets']['Row']
+export type OverlayComponentTable = PublicSchema['overlay_components']['Row']
 
 
 // UPDATE TABELS
@@ -16,6 +19,9 @@ export type UpdateSpotifyBannedSongsTable = PublicSchema['spotify_banned_songs']
 export type UpdateSpotifyBannedChatterTable = PublicSchema['spotify_banned_chatters']['Update']
 export type UpdateTwitchIntegrationTable = PublicSchema['twitch_integration']['Update']
 export type UpdateCommandsTable = PublicSchema['commands']['Update']
+export type UpdateOverlayTable = PublicSchema['overlays']['Update']
+export type UpdateOverlayWidgetTable = PublicSchema['overlay_widgets']['Update']
+export type UpdateOverlayComponentTable = PublicSchema['overlay_components']['Update']
 
 
 
@@ -25,11 +31,14 @@ export type InsertSpotifySettingsTable = PublicSchema['spotify_settings']['Inser
 export type InsertSpotifyBannedSongsTable = PublicSchema['spotify_banned_songs']['Insert']
 export type InserSpotifyBannedChatterTable = PublicSchema['spotify_banned_chatters']['Insert']
 export type InsertTwitchIntegrationTable = PublicSchema['twitch_integration']['Insert']
+export type InsertOverlayTable = PublicSchema['overlays']['Insert']
+export type InsertOverlayWidgetTable = PublicSchema['overlay_widgets']['Insert']
+export type InsertOverlayComponentTable = PublicSchema['overlay_components']['Insert']
 
 
 
 
 // enums 
 export type PublicEnums = Database['public']['Enums']
-
 export type Actions = PublicEnums['actions']
+export type UserLevels = PublicEnums['userlevel']

@@ -1,6 +1,6 @@
 import authConfig from "./auth.config"
 import NextAuth from "next-auth"
-import { DEFAULT_LOGIN_REDIRECT, apiAuthPrefix, authRoutes, publicRoutes } from "@/routes";
+import { DEFAULT_LOGIN_REDIRECT, apiAuthPrefix, authRoutes, overlayRoute, publicRoutes } from "@/routes";
 
 const { auth: middleware } = NextAuth(authConfig)
 
@@ -16,10 +16,13 @@ export default middleware((req) => {
   const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
   const publicRoute = publicRoutes.includes(nextUrl.pathname);
   const authRoute = authRoutes.includes(nextUrl.pathname);
+  const isOverlayRoute = nextUrl.pathname.startsWith(overlayRoute);
 
-  if (isApiAuthRoute) {
+  if (isApiAuthRoute || isOverlayRoute) {
     return;
   }
+
+  if(nextUrl.pathname ) return;
 
   if (authRoute) {
     if (isLoggedIn) {

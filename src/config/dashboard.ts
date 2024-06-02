@@ -4,6 +4,7 @@ import { LayoutGrid, User2 } from "lucide-react";
 import { BsChatSquareText } from "react-icons/bs";
 import { FaCircle, FaMusic } from "react-icons/fa";
 import { GiSettingsKnobs } from "react-icons/gi";
+import { TfiLayoutMediaOverlayAlt2 } from "react-icons/tfi";
 
 export const dashboardConfig: DashboardConfig = {
   overview: {
@@ -28,6 +29,12 @@ export const dashboardConfig: DashboardConfig = {
         label: "Channel Points",
         href: "/dashboard/channelpoints/",
         icon: FaCircle,
+        beta: true,
+      },
+      {
+        label: "Overlays",
+        href: "/dashboard/overlays/",
+        icon: TfiLayoutMediaOverlayAlt2,
         beta: true,
       },
     ],

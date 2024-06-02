@@ -5,7 +5,7 @@ import Home from "@/components/icons/home";
 import Payment from "@/components/icons/payment";
 import Settings from "@/components/icons/settings";
 import Workflows from "@/components/icons/workflows";
-import { Actions } from "@/types/database";
+import { Actions, UserLevels } from "@/types/database";
 
 export const clients = [...new Array(10)].map((client, index) => ({
   href: `/${index + 1}.png`,
@@ -168,6 +168,32 @@ export const actions: IAction[] = [
   },
 ];
 
+export const userLevels: UserLevels[] = ["everyone", "follower", "vip", "subscriber", "moderator", "super_moderator", "broadcaster"];
 
-
-
+export const overlayResolutions = [
+  {
+    name: "1440P",
+    width: 2560,
+    height: 1440,
+  },
+  {
+    name: "1080P",
+    width: 1920,
+    height: 1080,
+  },
+  {
+    name: "900P",
+    width: 1600,
+    height: 900,
+  },
+  {
+    name: "720P",
+    width: 1280,
+    height: 720,
+  },
+  {
+    name: "custom",
+    width: undefined,
+    height: undefined,
+  }
+];

@@ -20,6 +20,7 @@ export const authRoutes = ["/login", "/unauthorized"];
 
 export const apiAuthPrefix = "/api/auth/";
 
+export const overlayRoute = "/overlay";
 /**
  * The default redirect path after a user logs in
  * @type {string}

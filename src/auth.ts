@@ -66,6 +66,8 @@ async function checkTwitchSubscriptions(user_id: string): Promise<boolean> {
       },
     });
 
+    // console.log(res.data)
+
     const subscriptions = TwitchEventSubscriptions(user_id);
 
     const missingSubs = subscriptions.map((sub) => sub.type).filter((sub) => !res.data.data.some((data) => data.type === sub));

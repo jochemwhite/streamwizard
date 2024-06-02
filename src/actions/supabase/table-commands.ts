@@ -2,7 +2,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
-import { CommandTable } from "@/types/database";
+import { CommandTable, InsertCommandTable, UpdateCommandsTable } from "@/types/database";
 
 
 
@@ -13,7 +13,7 @@ interface CommandCreateResponse {
 }
 
 // Create a new command
-export async function createCommand(new_command: CommandTable, url: string): Promise<CommandCreateResponse> {
+export async function createCommand(new_command: InsertCommandTable, url: string): Promise<CommandCreateResponse> {
   const session = await auth();
   
   const supabase = createClient(session?.supabaseAccessToken as string);
@@ -24,9 +24,7 @@ export async function createCommand(new_command: CommandTable, url: string): Pro
    return { error: error.message };
   }
   revalidatePath(url);
-  return {
-    data: new_command,
-  };
+  return { data: data![0] };
 }
 
 interface CommandUpdateResponse {
@@ -35,14 +33,17 @@ interface CommandUpdateResponse {
 }
 
 // Update a command
-export async function updateCommand(command: CommandTable, url: string): Promise<CommandTable> {
+export async function updateCommand(command: UpdateCommandsTable, url: string): Promise<CommandTable> {
   const session = await auth();
   
   const supabase = createClient(session?.supabaseAccessToken as string);
   const { error } = await supabase
     .from("commands")
     .update({ ...command })
-    .eq("id", command.id);
+    .eq("id", command.id!);
+
+
+    
 
   if (error) {
     revalidatePath(url);
@@ -50,7 +51,7 @@ export async function updateCommand(command: CommandTable, url: string): Promise
   }
 
   revalidatePath(url);
-  return command;
+  return { ...command } as CommandTable;
 }
 
 // get all commands

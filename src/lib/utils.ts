@@ -44,6 +44,20 @@ export function TwitchEventSubscriptions(user_id: string) {
       },
     },
     {
+      type: "stream.online",
+      version: "1",
+      condition: {
+        broadcaster_user_id: user_id,
+      },
+    },
+    {
+      type: "stream.offline",
+      version: "1",
+      condition: {
+        broadcaster_user_id: user_id,
+      },
+    },
+    {
       type: "channel.channel_points_custom_reward.update",
       version: "1",
       condition: {

@@ -3,7 +3,7 @@ import { createCommand, deleteCommands, updateCommand as update } from "@/action
 import { CommandSchemaType } from "@/schemas/command-schema";
 import React, { ReactNode, createContext, startTransition, useOptimistic } from "react";
 import { toast } from "sonner";
-import { CommandTable, InsertCommandTable, UpdateCommandsTable } from "@/types/database";
+import { CommandTable, InsertCommandTable, UpdateCommandsTable, UserLevels } from "@/types/database";
 
 // Define the type for the context
 export interface CommandContextType {
@@ -24,7 +24,7 @@ interface Props {
   editor: string;
 }
 
-function reducer(state: CommandTable[], action: { type: string; payload: CommandTable }) {
+function reducer(state: CommandTable[], action: { type: string; payload: any }) {
   switch (action.type) {
     case "ADD_COMMAND":
       return [...state, action.payload];
@@ -45,7 +45,7 @@ export const CommandProvider = ({ children, initialCommands, broadcaster_id, edi
   const addCommand = async (command: CommandSchemaType) => {
     // TODO: fix type
     // @ts-ignore
-    const new_command: CommandTable = {
+    const new_command: InsertCommandTable = {
       ...command,
       broadcaster_id: +broadcaster_id,
       user_id: user_id,
@@ -62,22 +62,26 @@ export const CommandProvider = ({ children, initialCommands, broadcaster_id, edi
       success: `Command ${command.command} added successfully`,
       error: (error) => error,
     });
-
-
   };
 
   // Function to update a command
-  const updateCommand = async (command: CommandTable) => {
+  const updateCommand = async (command: UpdateCommandsTable) => {
     startTransition(() => {
       dispatch({ type: "UPDATE_COMMAND", payload: command });
     });
-    
-    toast.promise(update(command, "/dashboard/commands"), {
+
+    const x: UpdateCommandsTable = {
+      ...command,
+      updated_by: editor,
+      updated_at: new Date().toDateString(),
+    };
+
+    toast.promise(update(x, "/dashboard/commands"), {
       loading: "Updating command...",
       success: `Command ${command.command} updated successfully`,
       error: (error) => error,
     });
-
+    return;
   };
 
   // Function to delete a command
@@ -105,7 +109,7 @@ export const CommandProvider = ({ children, initialCommands, broadcaster_id, edi
   };
 
   // Value that will be passed to context consumers
-  const value = { commands: optimisticCommands, addCommand, updateCommand, deleteCommand };
+  const value: CommandContextType = { commands: optimisticCommands, addCommand, updateCommand, deleteCommand };
 
   return <CommandContext.Provider value={value}>{children}</CommandContext.Provider>;
 };

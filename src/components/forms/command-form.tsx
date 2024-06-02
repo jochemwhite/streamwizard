@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrig
 import useCommands from "@/hooks/useCommands";
 import { CommandSchema } from "@/schemas/command-schema";
 import { Textarea } from "../ui/textarea";
-import { CommandTable } from "@/types/database";
+import { CommandTable, UserLevels } from "@/types/database";
 import { actions } from "@/lib/constant";
 
 interface Props {
@@ -28,7 +28,7 @@ export function CommandForm({ setModal, command }: Props) {
       command: command?.command || "",
       action: command?.action || "none",
       message: command?.message || "",
-      userlevel: (command?.userlevel as any) || "everyone",
+      userlevel: (command?.userlevel as UserLevels) || "everyone",
       cooldown: command?.cooldown || 0,
       status: command?.status || true,
     },
@@ -50,7 +50,6 @@ export function CommandForm({ setModal, command }: Props) {
 
     setModal(false);
   }
-
 
   return (
     <Form {...form}>
@@ -77,7 +76,13 @@ export function CommandForm({ setModal, command }: Props) {
               <FormItem className="mx-2">
                 <FormLabel>Action</FormLabel>
                 <FormControl>
-                  <Select onValueChange={(e) => {field.onChange(e)}} defaultValue="none" value={field.value}>
+                  <Select
+                    onValueChange={(e) => {
+                      field.onChange(e);
+                    }}
+                    defaultValue="none"
+                    value={field.value}
+                  >
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Select a action" />
                     </SelectTrigger>

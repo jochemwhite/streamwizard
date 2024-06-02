@@ -11,7 +11,7 @@ export type Database = {
     Tables: {
       commands: {
         Row: {
-          action: Database["public"]["Enums"]["actions"]
+          action: string
           broadcaster_id: number
           command: string
           cooldown: number | null
@@ -22,10 +22,10 @@ export type Database = {
           updated_at: string | null
           updated_by: string | null
           user_id: string
-          userlevel: Database["public"]["Enums"]["userlevel"]
+          userlevel: string
         }
         Insert: {
-          action?: Database["public"]["Enums"]["actions"]
+          action: string
           broadcaster_id: number
           command: string
           cooldown?: number | null
@@ -36,10 +36,10 @@ export type Database = {
           updated_at?: string | null
           updated_by?: string | null
           user_id: string
-          userlevel?: Database["public"]["Enums"]["userlevel"]
+          userlevel: string
         }
         Update: {
-          action?: Database["public"]["Enums"]["actions"]
+          action?: string
           broadcaster_id?: number
           command?: string
           cooldown?: number | null
@@ -50,7 +50,7 @@ export type Database = {
           updated_at?: string | null
           updated_by?: string | null
           user_id?: string
-          userlevel?: Database["public"]["Enums"]["userlevel"]
+          userlevel?: string
         }
         Relationships: [
           {
@@ -59,6 +59,117 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "twitch_integration"
             referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      overlay_components: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          name: string
+          settings: string
+          styles: string
+          widget_id: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          name: string
+          settings: string
+          styles: string
+          widget_id?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          name?: string
+          settings?: string
+          styles?: string
+          widget_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "overlay_components_widget_id_fkey"
+            columns: ["widget_id"]
+            isOneToOne: false
+            referencedRelation: "overlay_widgets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      overlay_widgets: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          overlay_id: string
+          styles: string
+          x_axis: number
+          y_axis: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          overlay_id: string
+          styles: string
+          x_axis: number
+          y_axis: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          overlay_id?: string
+          styles?: string
+          x_axis?: number
+          y_axis?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "overlay_widgets_overlay_id_fkey"
+            columns: ["overlay_id"]
+            isOneToOne: false
+            referencedRelation: "overlays"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      overlays: {
+        Row: {
+          created_at: string
+          height: number
+          id: string
+          name: string
+          user_id: string
+          width: number
+        }
+        Insert: {
+          created_at?: string
+          height: number
+          id?: string
+          name: string
+          user_id: string
+          width: number
+        }
+        Update: {
+          created_at?: string
+          height?: number
+          id?: string
+          name?: string
+          user_id?: string
+          width?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "overlays_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
           },
         ]
       }
