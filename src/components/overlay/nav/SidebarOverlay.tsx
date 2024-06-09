@@ -1,31 +1,26 @@
+"use client";
 import React from "react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-// import RenderSettings from "../widgets/renderSettings";
 import { CustomSlider } from "@/components/overlay/nav/sidebar/custom-slider";
 import { Sketch } from "@uiw/react-color";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import UseOverlay from "@/hooks/useOverlay";
-
-
+import Sidebar from "@/components/nav/sidebar";
 
 export default function SidebarOverlay() {
-
-  const {activeWidget, updateComponentContent, updateWidget} = UseOverlay();
-
+  const { activeWidget, updateComponentContent, updateWidget, sidebarRef } = UseOverlay();
 
   function handleChange(componentID: string, content?: string, styles?: React.CSSProperties) {
-    if(!activeWidget) return;
-
+    if (!activeWidget) return;
 
     updateComponentContent(activeWidget.id, componentID, content, styles);
   }
 
   return (
-    <>
+    <Sidebar ref={sidebarRef}>
       {activeWidget ? (
         <div className="px-2">
           <h4 className="text-2xl font-semibold text-center">{activeWidget.name}</h4>
-
 
           <CustomSlider
             label="width"
@@ -62,8 +57,8 @@ export default function SidebarOverlay() {
                   color={activeWidget.styles.color ? activeWidget.styles.color : "white"}
                   onChange={(color) => {
                     updateWidget(activeWidget, {
-                      backgroundColor: color.hexa
-                    })
+                      backgroundColor: color.hexa,
+                    });
                   }}
                 />
               </HoverCardContent>
@@ -74,9 +69,7 @@ export default function SidebarOverlay() {
             {activeWidget.components?.map((component, index) => (
               <AccordionItem value={index.toString()} key={index}>
                 <AccordionTrigger>{component.name}</AccordionTrigger>
-                <AccordionContent>
-                  {/* <RenderSettings component={component} handleChange={handleChange} /> */}
-                </AccordionContent>
+                <AccordionContent>{/* <RenderSettings component={component} handleChange={handleChange} /> */}</AccordionContent>
               </AccordionItem>
             ))}
           </Accordion>
@@ -84,6 +77,6 @@ export default function SidebarOverlay() {
       ) : (
         <div>no active widget</div>
       )}
-    </>
+    </Sidebar>
   );
 }

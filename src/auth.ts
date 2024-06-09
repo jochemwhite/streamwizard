@@ -81,7 +81,7 @@ async function checkTwitchSubscriptions(user_id: string): Promise<boolean> {
               ...subscriptions.find((subscription) => subscription.type === sub),
               transport: {
                 method: "conduit",
-                conduit_id: "87dd37b2-65fe-45a1-b9ad-07751cfeee3f",
+                conduit_id: "cbdc24bb-6f57-4691-ae2b-681579be0121",
               },
             },
             {

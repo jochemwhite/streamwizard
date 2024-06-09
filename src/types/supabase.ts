@@ -68,6 +68,7 @@ export type Database = {
           created_at: string
           id: string
           name: string
+          overlayID: string
           settings: string
           styles: string
           widget_id: string | null
@@ -77,6 +78,7 @@ export type Database = {
           created_at?: string
           id?: string
           name: string
+          overlayID: string
           settings: string
           styles: string
           widget_id?: string | null
@@ -86,6 +88,7 @@ export type Database = {
           created_at?: string
           id?: string
           name?: string
+          overlayID?: string
           settings?: string
           styles?: string
           widget_id?: string | null
@@ -306,6 +309,7 @@ export type Database = {
           chatter_name: string
           created_at: string
           id: number
+          img_url: string | null
           song_id: string
           song_name: string
           user_id: string
@@ -318,6 +322,7 @@ export type Database = {
           chatter_name: string
           created_at?: string
           id?: number
+          img_url?: string | null
           song_id: string
           song_name: string
           user_id: string
@@ -330,6 +335,7 @@ export type Database = {
           chatter_name?: string
           created_at?: string
           id?: number
+          img_url?: string | null
           song_id?: string
           song_name?: string
           user_id?: string
