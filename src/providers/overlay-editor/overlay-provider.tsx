@@ -18,7 +18,7 @@ export interface OverlayContextType {
   sidebarRef: MutableRefObject<HTMLDivElement | null>;
   headerRef: MutableRefObject<HTMLDivElement | null>;
 
-  scale?: number;
+  scale: number;
   state: EditorState;
 
   dispatch: Dispatch<OverlayAction>;
@@ -112,12 +112,12 @@ export const OverlayProvider = ({ children, overlay, user_id }: Props) => {
 
     console.log(updatedElement);
 
-    // dispatch({
-    //   type: "UPDATE_ELEMENT",
-    //   payload: {
-    //     elementDetails: updatedElement,
-    //   },
-    // });
+    dispatch({
+      type: "UPDATE_ELEMENT",
+      payload: {
+        elementDetails: updatedElement,
+      },
+    });
   };
 
   //
@@ -153,6 +153,7 @@ export const OverlayProvider = ({ children, overlay, user_id }: Props) => {
     canvasStyles,
     user_id,
     state: state,
+    scale,
     Save,
     onDrop,
     dispatch,

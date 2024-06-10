@@ -16,6 +16,9 @@ export default function Page() {
 
   const handleOnDrop = (e: React.DragEvent) => {
     e.stopPropagation();
+
+    console.log(scale)
+
     if (!canDrag) {
       console.log("can't drag in live mode");
       return;
@@ -74,7 +77,7 @@ export default function Page() {
             bounds="parent"
             scale={scale}
             key={index}
-            position={{ x: +element.x_axis, y: +element.y_axis }}
+            position={{ x: +state.editor.elements[index].x_axis, y: +state.editor.elements[index].y_axis }}
             onStop={(e, data) => {
               console.log("data", data.x, data.y);
               onDrop(element, data);
