@@ -12,14 +12,17 @@ import LayersComponent from "./tabs/layers-component";
 import useOverlay from "@/hooks/useOverlay";
 
 export default function PageEditorSidebar() {
-  const { state, activeWidget } = useOverlay();
+  const { state, sidebarRef} = useOverlay();
+
+  const { editor } = state;
+
   return (
-    <Sheet open={true} modal={false}>
-      <Tabs defaultValue="Settings">
+    <Sheet open={true} modal={false} >
+      <Tabs defaultValue="Settings" ref={sidebarRef}>
         <SheetContent side="right" className={cn("mt-[97px] w-12 z-[80] shadow-none p-0 focus:border-none transition-all overflow-hidden")}>
           <TabList />
         </SheetContent>
-        <SheetContent side="right" className={cn("mt-[97px] w-80 z-[40] shadow-none p-0 mr-12 bg-background h-full transition-all overflow-hidden")}>
+        <SheetContent side="right" className={cn("mt-[97px] w-80 z-[80] shadow-none p-0 mr-12 bg-background h-full transition-all overflow-hidden")}>
           <div className="grid gap-4 h-full pb-36 overflow-y-auto">
             <TabsContent value="Settings">
               <SheetHeader className="text-left p-6">
@@ -27,11 +30,11 @@ export default function PageEditorSidebar() {
                 <SheetDescription>
                   Show your creativity! You can customize every component as you
                   <span className="font-bold">
-                    {activeWidget?.name}#{activeWidget?.id.substring(0, 4)}
+                    {editor.selectedElement.name}#{editor.selectedElement?.id.substring(0, 4)}
                   </span>
                 </SheetDescription>
               </SheetHeader>
-              {activeWidget?.id && <SettingsTab />}
+              {editor.selectedElement?.id && <SettingsTab />}
             </TabsContent>
             <TabsContent value="Media">
               <MediaBucketTab />

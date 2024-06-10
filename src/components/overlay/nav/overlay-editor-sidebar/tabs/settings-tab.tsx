@@ -1,31 +1,38 @@
 "use client";
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import useEditor from "@/hooks/useEditor";
-import useStyles from "@/hooks/useStyles";
-import { PropertisElementHandler, customSettings } from "@/types/pageEditor";
-import { elements } from "../../components";
-import DecorationsSettings from "../../styles/decorations";
-import DimensionsSettings from "../../styles/dimensions";
-import DisplaySettings from "../../styles/display";
-import TypographySettings from "../../styles/typography";
+import useOverlay from "@/hooks/useOverlay";
+import { PropertisElementHandler, customSettings } from "@/types/overlay";
+import { elements } from "@/components/overlay/elements";
+import TypographySettings from "../styles/typography";
+import DimensionsSettings from "../styles/dimensions";
+import DecorationsSettings from "../styles/decorations";
+import DisplaySettings from "../styles/display";
 
 export default function SettingsTab() {
-  const { state, dispatch } = useEditor();
-  const { activeStyle } = useStyles(state.editor.selectedElement);
+  const { state, dispatch } = useOverlay();
+
+  const activeStyle = state.editor.selectedElement.styles;
 
   function handleOnChanges(e: PropertisElementHandler) {
-    const styleSettings = e.target.id as keyof typeof activeStyle;
+    const styleSettings = e.target.id;
+    // const styleSettings = e.target.id as keyof typeof activeStyle;
+
     const { id, value } = e.target;
     const styleObject: customSettings = {
       [styleSettings]: value,
     };
 
     dispatch({
-      type: "pageEditor/updateAnElementStyle",
+      type: "UPDATE_ELEMENT",
       payload: {
-        element: state.editor.selectedElement,
-        style: styleObject,
+        elementDetails: {
+          ...state.editor.selectedElement,
+          styles: {
+            ...state.editor.selectedElement.styles,
+            ...styleObject,
+          },
+        },
       },
     });
   }

@@ -71,7 +71,7 @@ export default function OverlayCard({ overlay }: Props) {
               <DropdownMenuItem>Delete Overlay</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          <Link href={`/dashboard/overlays/edit?overlay_id=${overlay.id}`}>
+          <Link href={`/overlay/edit?overlay_id=${overlay.id}`}>
             {/* <Button variant="outline">View</Button> */}
             <Button variant="outline">Edit</Button>
           </Link>

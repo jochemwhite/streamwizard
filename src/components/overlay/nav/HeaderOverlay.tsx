@@ -14,10 +14,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 
 export default function HeaderOverlay() {
-  const { Save, headerRef, addWidget, state } = UseOverlay();
+  const { Save, headerRef, state } = UseOverlay();
+
+  const overlay = state.editor;
 
   const handleOnBlurTitleChange: FocusEventHandler<HTMLInputElement> = async (event) => {
-    if (event.target.value === state.name) return;
+    if (event.target.value === state.editor.name) return;
     if (event.target.value) {
       toast.success("Page Title Updated");
     } else {
@@ -33,7 +35,7 @@ export default function HeaderOverlay() {
             <ArrowLeftCircle />
           </Link>
           <div className="flex flex-col w-full">
-            <Input defaultValue={state.name} className="border-none h-5 m-0 p-0 text-lg" onBlur={handleOnBlurTitleChange} />
+            <Input defaultValue={overlay.name} className="border-none h-5 m-0 p-0 text-lg" onBlur={handleOnBlurTitleChange} />
           </div>
         </aside>
         <aside className="flex flex-row items-center justify-center"></aside>
@@ -66,7 +68,7 @@ export default function HeaderOverlay() {
               Publish
             </div>
             <span className="text-muted-foreground text-sm">
-              Laste updated {new Date(state.created_at).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
+              Laste updated {new Date(overlay.created_at).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
             </span>
           </div>
           <Button

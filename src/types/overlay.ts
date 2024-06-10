@@ -1,30 +1,46 @@
-import React from "react";
+import React, { CSSProperties } from "react";
 
 export type overlay = {
-  created_at: string;
-  height: number;
   id: string;
-  name: string;
-  user_id: string;
+  height: number;
   width: number;
-  widgets: widgets[];
+  name: string;
+  created_at: string;
+  user_id: string;
+  displayMode: "Live" | "Editor" | "Preview";
+  elements: OverlayElement[];
+  selectedElement: OverlayElement;
+  published: boolean;
 };
 
-export type widgets = {
+export type OverlayElement<T = any> = {
   id: string;
+  styles: customSettings;
   name: string;
-  category: string;
-  styles: React.CSSProperties;
+  type: string | null;
+  content: T;
   x_axis: number;
   y_axis: number;
-  components?: components[];
 };
 
-export type components = {
-  content: string;
-  id: string;
-  componentID: string;
-  name: string;
-  settings: any;
-  styles: React.CSSProperties;
+export interface customSettings extends CSSProperties {
+  backgroundVideo?: string;
+  customFont?: string;
+}
+
+export type HistoryState = {
+  history: overlay[];
+  currentIndex: number;
+};
+
+export type EditorState = {
+  editor: overlay;
+  history: HistoryState;
+};
+
+export type PropertisElementHandler = {
+  target: {
+    id: string;
+    value: string;
+  };
 };

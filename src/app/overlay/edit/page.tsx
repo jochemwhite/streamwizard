@@ -1,30 +1,28 @@
 "use client";
 
-import Draggable from "react-draggable";
+import DotPattern from "@/components/magicui/dot-pattern";
+import RenderComponents from "@/components/overlay/widgets/render-components";
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuShortcut, ContextMenuTrigger } from "@/components/ui/context-menu";
 import UseOverlay from "@/hooks/useOverlay";
-import RenderComponents from "@/components/overlay/widgets/render-components";
-import DotPattern from "@/components/magicui/dot-pattern";
-import { cn } from "@/utils";
-import { useEffect } from "react";
+import Draggable from "react-draggable";
 
 export default function Page() {
-  const { delWidget, onDrop, setActiveWidget, canvasStyles, scale, state } = UseOverlay();
+  const { onDrop, canvasStyles, scale, state } = UseOverlay();
 
  
   return (
     <div className="bg-green-950 relative " style={canvasStyles}>
       <DotPattern  />
-      {state?.widgets.map((widget, index) => {
+      {state?.editor.elements.map((element, index) => {
         return (
           <Draggable
             bounds="parent"
             scale={scale}
             key={index}
-            position={{ x: +widget.x_axis, y: +widget.y_axis }}
+            position={{ x: +element.x_axis, y: +element.y_axis }}
             onStop={(e, data) => {
               // console.log("data", data.x, data.y);
-              onDrop(widget, data);
+              onDrop(element, data);
             }}
             // onDrag={(e, data) => {
             //   console.log(data);
@@ -34,19 +32,19 @@ export default function Page() {
               <ContextMenu>
                 <ContextMenuTrigger>
                   <div
-                    style={widget.styles}
+                    style={element.styles}
                     onClick={() => {
-                      setActiveWidget(widget);
+                      // setActiveWidget(widget);
                     }}
                   >
-                    <RenderComponents widget={widget} />
+                    <RenderComponents widget={element} />
                   </div>
                 </ContextMenuTrigger>
                 <ContextMenuContent className="w-64">
                   <ContextMenuItem
                     inset
                     onClick={() => {
-                      delWidget(widget.id);
+                      // delWidget(widget.id);
                     }}
                   >
                     Delete

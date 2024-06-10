@@ -8,7 +8,15 @@ import Sidebar from "@/components/nav/sidebar";
 import { dashboardConfig } from "@/config/dashboard";
 import { auth } from "@/auth";
 
-export default async function Layout({ children }: Readonly<{ children: React.ReactNode }>) {
+
+
+interface Props {
+  children: React.ReactNode;
+  params: any;
+}
+
+
+export default async function Layout({ children, params }: Props) {
   const session = await auth()
   const user = await getUser();
 
@@ -17,7 +25,7 @@ export default async function Layout({ children }: Readonly<{ children: React.Re
     return null;
   }
 
-
+  console.log(params);
 
 
   return (
