@@ -1,6 +1,7 @@
 import title from "./title";
+import text from "./text";
 
-export { title };
+export { title, text };
 
 
 

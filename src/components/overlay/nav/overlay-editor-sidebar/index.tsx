@@ -28,9 +28,9 @@ export default function PageEditorSidebar() {
               <SheetHeader className="text-left p-6">
                 <SheetTitle>Styles</SheetTitle>
                 <SheetDescription>
-                  Show your creativity! You can customize every component as you
+                  Show your creativity! You can customize every widget.
                   <span className="font-bold">
-                    {editor.selectedElement.name}#{editor.selectedElement?.id.substring(0, 4)}
+                    {editor.selectedElement?.name}#{editor.selectedElement?.id.substring(0, 4)}
                   </span>
                 </SheetDescription>
               </SheetHeader>

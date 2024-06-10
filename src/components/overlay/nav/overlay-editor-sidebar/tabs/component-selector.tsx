@@ -1,11 +1,11 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
-import { useEffect, useState } from "react";
 import { elements } from "@/components/overlay/elements";
 import PlaceHolder from "@/components/overlay/elements/placeholder";
+import { ElementSidebar } from "@/types/overlay";
 
 export default function ComponentsTab() {
-  const elementsByGroup = elements.reduce((acc: { [key: string]: any[] }, element) => {
+  const elementsByGroup = elements.reduce((acc: { [key: string]: ElementSidebar<any>[] }, element) => {
     const { group } = element;
 
     if (!acc[group]) {
@@ -24,8 +24,8 @@ export default function ComponentsTab() {
           <AccordionContent className="grid grid-cols-2 gap-2">
             {elements.map((element, index) => (
               <div key={index} className="flex flex-col items-center justify-center">
-                <PlaceHolder Type={element.id} Icon={element.icon} />
-                <span className="text-muted-foreground">{element.label}</span>
+                <PlaceHolder Type={element.type} Icon={element.icon} />
+                <span className="text-muted-foreground">{element.name}</span>
               </div>
             ))}
           </AccordionContent>

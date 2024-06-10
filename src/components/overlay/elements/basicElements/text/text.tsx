@@ -16,33 +16,28 @@ export default function TextComponent({ element }: Props) {
 
   const sytles = element.styles;
 
-
   ///WE ARE NOT ADDING DRAG DROP
   const content = !Array.isArray(element.content) ? element.content : null;
   return (
-    <div>
-      {content?.typeText === "Title" && (
-        <h2
-          contentEditable={state.editor.displayMode === "Editor"}
-          onBlur={(e) => {
-            const spanElemtn = e.target;
-            dispatch({
-              type: "UPDATE_ELEMENT",
-              payload: {
-                elementDetails: {
-                  ...element,
-                  content: {
-                    innerText: spanElemtn.innerText,
-                  },
-                },
+    <h2
+      style={sytles}
+      contentEditable={state.editor.displayMode === "Editor"}
+      onBlur={(e) => {
+        const spanElemtn = e.target;
+        dispatch({
+          type: "UPDATE_ELEMENT",
+          payload: {
+            elementDetails: {
+              ...element,
+              content: {
+                innerText: spanElemtn.innerText,
               },
-            });
-          }}
-        >
-          {content?.innerText}
-        </h2>
-      )}
-
-    </div>
+            },
+          },
+        });
+      }}
+    >
+      {content?.innerText}
+    </h2>
   );
 }

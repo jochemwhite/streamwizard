@@ -11,14 +11,6 @@ export type EditorElement <T = any> = {
 };
 
 
-export type ElementSidebar<T> = {
-  icon: LucideIcon;
-  label: string;
-  id: string;
-  name: string;
-  type: string;
-  group: "layout" | "elements" | "hero" | "twitch" | "youtube" | "discord" 
-  defaultPayload: EditorElement<T>;
-  component?: ({ element }: {element: EditorElement<T>}) => JSX.Element;
-  settings?: ({ element }: {element: EditorElement<T>}) => JSX.Element;
-};
+
+
+

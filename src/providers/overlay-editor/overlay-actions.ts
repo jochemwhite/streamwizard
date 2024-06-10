@@ -47,24 +47,15 @@ export function overlayReducer(state: EditorState, action: OverlayAction): Edito
  * @returns The updated ElementsArray with the new element added.
  */
 export const addElement = (ElementsArray: OverlayElement[], action: OverlayAction["payload"]): OverlayElement[] => {
-  return ElementsArray.map((item) => {
-    if (item.id === action.containerId && Array.isArray(item.content)) {
-      return {
-        ...item,
-        content: [...item.content, action.elementDetails],
-      };
-    } else if (item.content && Array.isArray(item.content)) {
-      return {
-        ...item,
-        content: addElement(item.content, action),
-      };
-    }
-    return item;
-  });
+  console.log("addElement", ElementsArray, action);
+
+  return [...ElementsArray, action.elementDetails];
 };
 
 // function to update the element
 const updateElement = (ElementsArray: OverlayElement[], element: OverlayElement): OverlayElement[] => {
+  console.log("updateElement", ElementsArray, element	)
+
   // find the element in the array
   return ElementsArray.map((item) => {
     if (item.id === element.id) {

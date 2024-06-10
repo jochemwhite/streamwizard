@@ -1,4 +1,4 @@
-import { ElementSidebar } from "@/types/overlay-editor";
+import { ElementSidebar } from "@/types/overlay";
 import * as BasicElements from "./basicElements";
 
 const allElements = {

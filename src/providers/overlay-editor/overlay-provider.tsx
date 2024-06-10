@@ -28,22 +28,8 @@ export interface OverlayContextType {
 export const OverlayContext = createContext<OverlayContextType | undefined>(undefined);
 
 const initialOverlayState: EditorState["editor"] = {
-  elements: [
-    {
-      content: [],
-      id: "__body",
-      name: "Body",
-      styles: {},
-      type: "container",
-    },
-  ],
-  selectedElement: {
-    id: "",
-    content: [],
-    name: "",
-    styles: {},
-    type: null,
-  },
+  elements: [],
+  selectedElement: null,
   displayMode: "Editor",
   width: 1920,
   height: 1080,
@@ -115,17 +101,23 @@ export const OverlayProvider = ({ children, overlay, user_id }: Props) => {
     }
   }, [screenWidth, screenHeight]);
 
+  useEffect(() => {
+    console.log(state);
+  }, [state]);
+
   // handle drop event
   const onDrop = (updatedWidget: OverlayElement, data: DraggableData) => {
     const { x, y } = data;
-    const updatedElement: OverlayElement = { ...updatedWidget, styles: { ...updatedWidget.styles, left: x, top: y } };
+    const updatedElement: OverlayElement = { ...updatedWidget, styles: { ...updatedWidget.styles, }, x_axis: x, y_axis: y};
 
-    dispatch({
-      type: "UPDATE_ELEMENT",
-      payload: {
-        elementDetails: updatedElement,
-      },
-    });
+    console.log(updatedElement);
+
+    // dispatch({
+    //   type: "UPDATE_ELEMENT",
+    //   payload: {
+    //     elementDetails: updatedElement,
+    //   },
+    // });
   };
 
   //

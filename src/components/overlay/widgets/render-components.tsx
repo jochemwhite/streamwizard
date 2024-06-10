@@ -1,38 +1,20 @@
-import React from "react";
-import { DynamicFontLoader } from "./DynamicFontLoader";
-import { widgets } from "@/types/overlay";
-import Queue from "./spotify/spotify-queue";
+import { OverlayElement } from "@/types/overlay";
+import TextComponent from "../elements/basicElements/text/text";
 
 interface Props {
-  widget: widgets
+  element: OverlayElement
 }
 
-export default function RenderComponents({ widget }: Props) {
-  return (
-    <div key={widget.id}>
-      {widget.components && widget.components.map((component) => {
-        const { componentID,  styles, content, settings } = component;
+export default function RenderComponents({ element }: Props) {
+  switch (element.type) {
+    case "basicElements/text":
+      return <TextComponent element={element} />
+    default:
+      return <div>Element not found</div>;
+  }
 
 
-        switch (componentID) {
-          case "title":
-            const titleKey = "title";
-            
-            return (
-              <React.Fragment key={titleKey}>
-                <p style={styles}>
-                  {content}
-                </p>
-              </React.Fragment>
-            );
 
-          case "spotify.queue":
-            return <Queue key="queue" styles={styles} content={content} settings={settings} />;
 
-          default:
-            return null; // or <React.Fragment key="default" />;
-        }
-      })}
-    </div>
-  );
+  
 }

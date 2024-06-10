@@ -1,3 +1,4 @@
+import { LucideIcon } from "lucide-react";
 import React, { CSSProperties } from "react";
 
 export type overlay = {
@@ -9,7 +10,7 @@ export type overlay = {
   user_id: string;
   displayMode: "Live" | "Editor" | "Preview";
   elements: OverlayElement[];
-  selectedElement: OverlayElement;
+  selectedElement: OverlayElement | null;
   published: boolean;
 };
 
@@ -17,7 +18,7 @@ export type OverlayElement<T = any> = {
   id: string;
   styles: customSettings;
   name: string;
-  type: string | null;
+  type: EditorBtns | null;
   content: T;
   x_axis: number;
   y_axis: number;
@@ -44,3 +45,18 @@ export type PropertisElementHandler = {
     value: string;
   };
 };
+
+export type ElementSidebar<T> = {
+  icon: LucideIcon;
+  name: string;
+  type: EditorBtns;
+  group: "layout" | "elements" | "hero" | "twitch" | "youtube" | "discord" 
+  defaultPayload: OverlayElement<T>;
+  component?: ({ element }: {element: OverlayElement<T>}) => JSX.Element;
+  settings?: ({ element }: {element: OverlayElement<T>}) => JSX.Element;
+};
+
+
+export type EditorBtns =
+  | "widget_container"
+  | 'basicElements/text'
