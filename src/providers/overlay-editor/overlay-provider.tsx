@@ -101,16 +101,14 @@ export const OverlayProvider = ({ children, overlay, user_id }: Props) => {
     }
   }, [screenWidth, screenHeight]);
 
-  useEffect(() => {
-    console.log(state);
-  }, [state]);
+  // useEffect(() => {
+  //   console.log(state);
+  // }, [state]);
 
   // handle drop event
   const onDrop = (updatedWidget: OverlayElement, data: DraggableData) => {
     const { x, y } = data;
-    const updatedElement: OverlayElement = { ...updatedWidget, styles: { ...updatedWidget.styles, }, x_axis: x, y_axis: y};
-
-    console.log(updatedElement);
+    const updatedElement: OverlayElement = { ...updatedWidget, styles: { ...updatedWidget.styles }, x_axis: x, y_axis: y };
 
     dispatch({
       type: "UPDATE_ELEMENT",

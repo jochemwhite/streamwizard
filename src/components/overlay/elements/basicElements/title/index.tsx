@@ -1,38 +1,34 @@
-import { ElementSidebar } from "@/types/overlay-editor";
+import { ElementSidebar } from "@/types/overlay";
 import { TypeIcon } from "lucide-react";
-import { v4 } from "uuid";
 import TitleComponent from "./title";
-import settings from "./settings";
 
 export interface TitleContent {
-  title: string;
-  devider: boolean;
+  innerText: string;
+
 }
 
 const title: ElementSidebar<TitleContent> = {
   icon: TypeIcon,
   group: "elements",
-  id: v4(),
-  label: "Title",
   name: "Title",
-  type: "title",
+  type: "basicElements/title",
+
   defaultPayload: {
+    id: "",
+    name: "Text",
+    type: "basicElements/title",
     content: {
-      title: "Title",
-      devider: true,
+      innerText: "StreamWizard",
     },
-    id: v4(),
-    name: "title",
     styles: {
-      color: "white",
+      color: "#ffffff",
       fontSize: "50px",
-      fontWeight: "normal",
-      textAlign: "center",
+
     },
-    type: "title",
+    x_axis: 0,
+    y_axis: 0,
   },
   component: TitleComponent,
-  settings: settings,
 };
 
 export default title;

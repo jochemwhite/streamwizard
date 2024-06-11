@@ -1,42 +1,74 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { TitleContent } from ".";
 import useOverlay from "@/hooks/useOverlay";
-import { EditorElement } from "@/types/overlay-editor";
+import { OverlayElement } from "@/types/overlay";
 
 type Props = {
-  element: EditorElement<TitleContent>;
+  element: OverlayElement<TitleContent>;
 };
 
 export default function TitleComponent({ element }: Props) {
   const { state, dispatch } = useOverlay();
-  const { title, devider } = element.content;
+  const [isEdit, setIsEdit] = useState(false);
+  const headingRef = useRef<HTMLHeadingElement>(null);
 
-  const handleOnBlur = (e: React.FocusEvent<HTMLHeadingElement>) => {
-    const spanElemtn = e.target;
-    dispatch({
-      type: "UPDATE_ELEMENT",
-      payload: {
-        elementDetails: {
-          ...element,
-          content: {
-            title: spanElemtn.innerText,
-            devider,
-          },
-        } as EditorElement<TitleContent>,
-      },
-    });
-  };
+  const { innerText } = element.content;
+
+  const handleOnBlur = useCallback(
+    (e: React.FocusEvent<HTMLHeadingElement>) => {
+      const spanElement = e.target;
+      dispatch({
+        type: "UPDATE_ELEMENT",
+        payload: {
+          elementDetails: {
+            ...element,
+            content: {
+              innerText: spanElement.innerText,
+            },
+          } as OverlayElement<TitleContent>,
+        },
+      });
+      setIsEdit(false); // Exit edit mode on blur
+    },
+    [dispatch, element]
+  );
+
+  const handleDoubleClick = useCallback((event: React.MouseEvent<HTMLHeadingElement>) => {
+    // check if the display mode is editor
+    if (state.editor.displayMode !== "Editor") return;
+
+
+    setIsEdit(true);
+    if (headingRef.current) {
+      // Create a range and select all the content of the element
+      const range = document.createRange();
+      range.selectNodeContents(headingRef.current);
+
+      // Clear any existing selections
+      const selection = window.getSelection();
+      if (selection) {
+        selection.removeAllRanges();
+        selection.addRange(range);
+      }
+      headingRef.current.focus();
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isEdit && headingRef.current) {
+      headingRef.current.focus();
+    }
+  }, [isEdit]);
 
   return (
-    <>
-      <h3 className="fn_title" contentEditable={state.editor.displayMode === "Editor"} onBlur={handleOnBlur}>
-        {title}
-      </h3>
-      {devider && (
-        <div className="line">
-          <span />
-        </div>
-      )}
-    </>
+    <h3
+      ref={headingRef}
+      contentEditable={state.editor.displayMode === "Editor" && isEdit}
+      onBlur={handleOnBlur}
+      onDoubleClick={handleDoubleClick}
+      style={{ cursor: isEdit ? 'text' : 'pointer' }}
+    >
+      {innerText}
+    </h3>
   );
 }

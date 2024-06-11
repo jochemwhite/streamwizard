@@ -60,3 +60,4 @@ export type ElementSidebar<T> = {
 export type EditorBtns =
   | "widget_container"
   | 'basicElements/text'
+  | 'basicElements/title'

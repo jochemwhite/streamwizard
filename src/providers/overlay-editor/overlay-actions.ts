@@ -30,6 +30,14 @@ export function overlayReducer(state: EditorState, action: OverlayAction): Edito
         },
       };
 
+    case "REMOVE_ELEMENT":
+      return {
+        ...state,
+        editor: {
+          ...state.editor,
+          elements: deleteElement(state.editor.elements, action),
+        },
+      };
     default:
       return state;
   }
@@ -47,14 +55,14 @@ export function overlayReducer(state: EditorState, action: OverlayAction): Edito
  * @returns The updated ElementsArray with the new element added.
  */
 export const addElement = (ElementsArray: OverlayElement[], action: OverlayAction["payload"]): OverlayElement[] => {
-  console.log("addElement", ElementsArray, action);
+
 
   return [...ElementsArray, action.elementDetails];
 };
 
 // function to update the element
 const updateElement = (ElementsArray: OverlayElement[], element: OverlayElement): OverlayElement[] => {
-  console.log("updateElement", ElementsArray, element	)
+
 
   // find the element in the array
   return ElementsArray.map((item) => {
@@ -67,5 +75,24 @@ const updateElement = (ElementsArray: OverlayElement[], element: OverlayElement)
       };
     }
     return item;
+  });
+};
+
+
+
+/**
+ * Deletes an element from the editor array recursively.
+ * @param editorArray - The array of overlay elements.
+ * @param action - The overlay element to be deleted.
+ * @returns The updated array of overlay elements after deletion.
+ */
+export const deleteElement = (editorArray: OverlayElement[], action: OverlayAction): OverlayElement[] => {
+  return editorArray.filter((item) => {
+    if (item.id === action.payload.elementDetails.id) {
+      return false;
+    } else if (item.content && Array.isArray(item.content)) {
+      item.content = deleteElement(item.content, action);
+    }
+    return true;
   });
 };
