@@ -62,107 +62,34 @@ export type Database = {
           },
         ]
       }
-      overlay_components: {
-        Row: {
-          content: string
-          created_at: string
-          id: string
-          name: string
-          overlayID: string
-          settings: string
-          styles: string
-          widget_id: string | null
-        }
-        Insert: {
-          content: string
-          created_at?: string
-          id?: string
-          name: string
-          overlayID: string
-          settings: string
-          styles: string
-          widget_id?: string | null
-        }
-        Update: {
-          content?: string
-          created_at?: string
-          id?: string
-          name?: string
-          overlayID?: string
-          settings?: string
-          styles?: string
-          widget_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "overlay_components_widget_id_fkey"
-            columns: ["widget_id"]
-            isOneToOne: false
-            referencedRelation: "overlay_widgets"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      overlay_widgets: {
-        Row: {
-          created_at: string
-          id: string
-          name: string
-          overlay_id: string
-          styles: string
-          x_axis: number
-          y_axis: number
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          name: string
-          overlay_id: string
-          styles: string
-          x_axis: number
-          y_axis: number
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          name?: string
-          overlay_id?: string
-          styles?: string
-          x_axis?: number
-          y_axis?: number
-        }
-        Relationships: [
-          {
-            foreignKeyName: "overlay_widgets_overlay_id_fkey"
-            columns: ["overlay_id"]
-            isOneToOne: false
-            referencedRelation: "overlays"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       overlays: {
         Row: {
           created_at: string
+          elements: string | null
           height: number
           id: string
           name: string
+          selectedElement: string | null
           user_id: string
           width: number
         }
         Insert: {
           created_at?: string
+          elements?: string | null
           height: number
           id?: string
           name: string
+          selectedElement?: string | null
           user_id: string
           width: number
         }
         Update: {
           created_at?: string
+          elements?: string | null
           height?: number
           id?: string
           name?: string
+          selectedElement?: string | null
           user_id?: string
           width?: number
         }

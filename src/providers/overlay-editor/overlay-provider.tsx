@@ -1,11 +1,12 @@
 "use client";
-import { widgetList } from "@/components/overlay/widgets/widgets";
 import { EditorState, HistoryState, overlay, OverlayElement } from "@/types/overlay";
-import { Dispatch, MutableRefObject, ReactNode, createContext, useEffect, useReducer, useRef, useState } from "react";
+import { createContext, Dispatch, MutableRefObject, ReactNode, useEffect, useReducer, useRef, useState } from "react";
 import { DraggableData } from "react-draggable";
 import { toast } from "sonner";
 import { useWindowSize } from "usehooks-ts";
 import { OverlayAction, overlayReducer } from "./overlay-actions";
+import { updateOverlay } from "@/actions/supabase/table-overlays";
+import { set } from "zod";
 
 // Define the type for the context
 export interface OverlayContextType {
@@ -60,11 +61,23 @@ export const OverlayProvider = ({ children, overlay, user_id }: Props) => {
     width: "100px",
   } as React.CSSProperties);
   const [scale, setScale] = useState<number>(0);
-  const [state, dispatch] = useReducer(overlayReducer, { editor: initialOverlayState, history: initialHistoryState });
+  const [state, dispatch] = useReducer(overlayReducer, { editor: overlay, history: initialHistoryState });
 
   // calculate canvas dimensions
   useEffect(() => {
     const res = overlay;
+
+    if(state.editor.displayMode !== "Editor") {
+      setCanvasStyles({
+        height: res.height,
+        width: res.width,
+        transform: "scale(1)",
+        transformOrigin: "top left",
+      } as React.CSSProperties);
+    }
+
+
+
 
     if (sidebarRef.current && headerRef.current && res) {
       const sidebarWidth = sidebarRef.current.offsetWidth;
@@ -101,9 +114,9 @@ export const OverlayProvider = ({ children, overlay, user_id }: Props) => {
     }
   }, [screenWidth, screenHeight]);
 
-  // useEffect(() => {
-  //   console.log(state);
-  // }, [state]);
+  useEffect(() => {
+    console.log(state);
+  }, [state]);
 
   // handle drop event
   const onDrop = (updatedWidget: OverlayElement, data: DraggableData) => {
@@ -129,14 +142,18 @@ export const OverlayProvider = ({ children, overlay, user_id }: Props) => {
 
     toast.promise(
       async () => {
-        try {
-          const res = () => {};
-
-          console.log(res);
-        } catch (error) {
-          throw error;
-        }
+        await updateOverlay({
+          created_at: state.editor.created_at,
+          height: state.editor.height,
+          width: state.editor.width,
+          user_id: state.editor.user_id,
+          id: state.editor.id,
+          name: state.editor.name,
+          elements: JSON.stringify(state.editor.elements),
+          selectedElement: state.editor.selectedElement ? JSON.stringify(state.editor.selectedElement) : null,
+        });
       },
+
       {
         loading: `saving overlay...`,
         error: `failed to save overlay`,

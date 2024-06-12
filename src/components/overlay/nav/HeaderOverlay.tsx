@@ -1,17 +1,14 @@
 "use client";
-import { widgetList } from "@/components/overlay/widgets/widgets";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Switch } from "@/components/ui/switch";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import UseOverlay from "@/hooks/useOverlay";
 import { cn } from "@/utils";
-import { ArrowLeftCircle, EyeIcon, Redo2, Undo2 } from "lucide-react";
+import { ArrowLeftCircle, Redo2, Undo2 } from "lucide-react";
 import Link from "next/link";
 import { FocusEventHandler } from "react";
 import { toast } from "sonner";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
 
 export default function HeaderOverlay() {
   const { Save, headerRef, state } = UseOverlay();
@@ -71,11 +68,7 @@ export default function HeaderOverlay() {
               Laste updated {new Date(overlay.created_at).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
             </span>
           </div>
-          <Button
-          // onClick={handleOnSave}
-          >
-            Save
-          </Button>
+          <Button onClick={Save}>Save</Button>
         </aside>
       </nav>
     </TooltipProvider>

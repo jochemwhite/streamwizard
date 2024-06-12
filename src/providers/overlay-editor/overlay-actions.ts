@@ -1,7 +1,7 @@
 import { EditorState, OverlayElement, overlay } from "@/types/overlay";
 
 export interface OverlayAction {
-  type: "OVERRIDE_STATE" | "ADD_ELEMENT" | "REMOVE_ELEMENT" | "UPDATE_ELEMENT";
+  type: "OVERRIDE_STATE" | "ADD_ELEMENT" | "REMOVE_ELEMENT" | "UPDATE_ELEMENT" | "SET_SELECTED_ELEMENT";
   payload: {
     elementDetails: OverlayElement;
     containerId?: string;
@@ -16,6 +16,7 @@ export function overlayReducer(state: EditorState, action: OverlayAction): Edito
         editor: {
           ...state.editor,
           elements: addElement(state.editor.elements, action.payload),
+          selectedElement: action.payload.elementDetails,
         },
       };
 
@@ -27,6 +28,7 @@ export function overlayReducer(state: EditorState, action: OverlayAction): Edito
         editor: {
           ...state.editor,
           elements: newElementArray,
+          selectedElement: action.payload.elementDetails,
         },
       };
 
@@ -36,6 +38,15 @@ export function overlayReducer(state: EditorState, action: OverlayAction): Edito
         editor: {
           ...state.editor,
           elements: deleteElement(state.editor.elements, action),
+        },
+      };
+
+    case "SET_SELECTED_ELEMENT":
+      return {
+        ...state,
+        editor: {
+          ...state.editor,
+          selectedElement: action.payload.elementDetails,
         },
       };
     default:

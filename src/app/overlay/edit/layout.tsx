@@ -12,19 +12,22 @@ export default async function layout({ children }: { children: React.ReactNode }
   const supabase = createClient(session?.supabaseAccessToken as string);
   const { data, error } = await supabase
     .from("overlays")
-    .select("*, overlay_widgets(*, overlay_components(*))")
-    .eq("id", "b1084cfd-c65e-4e26-b8c6-88e265140f5d").single();
+    .select("*")
+    .eq("id", "9dffa4c9-db7b-4661-9821-87bc74860cbb").single();
 
   if(!data) return null
 
   const overlay: overlay = {
     created_at: data?.created_at,
     height: data.height,
+    width: data.width,
     id: data.id,
     name: data.name,
     user_id: data.user_id,
-    widgets: data.overlay_widgets,
-    width: data.width,
+    displayMode: "Editor",
+    elements: data.elements ? JSON.parse(data.elements) : [],
+    selectedElement: null,
+    published: false
   }
 
   return (

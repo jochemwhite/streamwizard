@@ -5,6 +5,7 @@ import RenderComponents from "@/components/overlay/widgets/render-components";
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuShortcut, ContextMenuTrigger } from "@/components/ui/context-menu";
 import UseOverlay from "@/hooks/useOverlay";
 import { EditorBtns, OverlayElement } from "@/types/overlay";
+import { cn } from "@/utils";
 import Draggable from "react-draggable";
 import { toast } from "sonner";
 import { v4 } from "uuid";
@@ -28,25 +29,31 @@ export default function OverlayEditorCanvas() {
       console.log("widget_container");
     }
 
-    
     const Element = elements.find((element) => element.type === componentType);
-    console.log(Element);
 
     if (!Element) {
       toast.error("Element not found");
       return;
     }
 
-    const newElement: OverlayElement = {
+    const newElement: OverlayElement<OverlayElement[]> = {
       id: v4(),
-      name: Element.name,
-      type: Element.type,
+      name: "Widget Container",
+      type: "widget_container",
       x_axis: e.clientX,
       y_axis: e.clientY,
-      styles: {
-        ...Element?.defaultPayload.styles,
-      },
-      content: Element?.defaultPayload.content,
+      styles: {},
+      content: [
+        {
+          content: Element.defaultPayload.content,
+          id: v4(),
+          name: Element.name,
+          styles: Element.defaultPayload.styles,
+          type: Element.type,
+          x_axis: e.clientX,
+          y_axis: e.clientY,
+        },
+      ],
     };
 
     dispatch({
@@ -68,7 +75,9 @@ export default function OverlayEditorCanvas() {
 
   return (
     <div
-      className="bg-green-950 relative"
+      className={cn("relative", {
+        "cursor-pointer bg-green-800": !isLiveMode,
+      })}
       style={canvasStyles}
       onDrop={(e) => {
         e.preventDefault();
@@ -79,13 +88,14 @@ export default function OverlayEditorCanvas() {
         // console.log(e);
       }}
     >
-      <DotPattern />
+      {state.editor.displayMode === "Editor" && <DotPattern />}
       {state?.editor.elements.map((element, index) => {
         return (
           <Draggable
             bounds="parent"
             scale={scale}
             key={index}
+            disabled={!canDrag}
             position={{ x: +state.editor.elements[index].x_axis, y: +state.editor.elements[index].y_axis }}
             onStop={(e, data) => {
               onDrop(element, data);
@@ -96,7 +106,7 @@ export default function OverlayEditorCanvas() {
           >
             <div className="inline-block absolute overflow-hidden">
               <ContextMenu>
-                <ContextMenuTrigger>
+                <ContextMenuTrigger disabled={state.editor.displayMode !== "Editor"}>
                   <div
                     style={element.styles}
                     onClick={() => {

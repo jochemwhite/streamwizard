@@ -1,4 +1,4 @@
-import { EditorElement } from "@/types/pageEditor";
+import { OverlayElement } from "@/types/overlay";
 import { Badge } from "@/components/ui/badge";
 import { Trash } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -7,13 +7,12 @@ import useOverlay from "@/hooks/useOverlay";
 import { elements } from "./elements";
 
 type Props = {
-  element: EditorElement;
+  element: OverlayElement;
 };
 
 export default function Recursive({ element }: Props) {
   const Component = elements.find((el) => el.type === element.type)?.component;
-  
-  
+
   const { state, dispatch } = useOverlay();
   const [fontFace, setFontFace] = useState<FontFace>();
 
@@ -41,41 +40,41 @@ export default function Recursive({ element }: Props) {
       type: "REMOVE_ELEMENT",
       payload: {
         elementDetails: element,
-      }
+      },
     });
   };
 
-
-  
   const handleOnClikBody = (e: React.MouseEvent) => {
     e.stopPropagation();
     dispatch({
-      type: "pageEditor/setSelectedAnElement",
-      payload: element,
+      type: "SET_SELECTED_ELEMENT",
+      payload: {
+        elementDetails: element,
+      },
     });
   };
 
-  if (element.type === "container" || element.type === "2Col") {
+  if (element.type === "widget_container" ) {
     return <Component element={element} />;
   }
 
   return (
     <div
       style={{
-        ...activeStyle,
+        ...element.styles,
         fontFamily: fontFace?.family,
       }}
       onClick={handleOnClikBody}
       className={cn("relative", {
-        "!border-blue-500": state.editor.selectedElement.id === element.id && state.editor.displayMode === "Editor",
+        "!border-blue-500": state.editor.selectedElement?.id === element.id && state.editor.displayMode === "Editor",
         "border-dashed border-[1px] border-slate-300 p-4": state.editor.displayMode === "Editor",
       })}
     >
-      {state.editor.selectedElement.id === element.id && state.editor.displayMode === "Editor" && (
-        <Badge className="absolute -top-[23px] -left-[1px] rounded-none rounded-t-lg">{state.editor.selectedElement.name}</Badge>
+      {state.editor.selectedElement?.id === element.id && state.editor.displayMode === "Editor" && (
+        <Badge className="absolute -top-[23px] -left-[1px] rounded-none rounded-t-lg">{state.editor.selectedElement?.name}</Badge>
       )}
       <Component element={element} />
-      {state.editor.selectedElement.id === element.id && state.editor.displayMode === "Editor" && (
+      {state.editor.selectedElement?.id === element.id && state.editor.displayMode === "Editor" && (
         <div className="absolute bg-primary px-2.5 py-1 text-xs font-bold -top-[25px] -right-[1px] rounded-none rounded-t-lg !text-white">
           <Trash
             className="cursor-pointer"
