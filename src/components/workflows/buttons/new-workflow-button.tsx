@@ -1,24 +1,23 @@
 "use client";
 import Workflowform from "@/components/forms/workflow-form";
-import Modal from "@/components/global/modal";
-import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { useModal } from "@/providers/modal-provider";
+import { cn } from "@/utils";
 import React from "react";
 
 type Props = {};
 
 const WorkflowButton = (props: Props) => {
-  const [open, setOpen] = React.useState(false);
+  const { openModal } = useModal();
+
+  const handleOpenModal = () => {
+    openModal(<Workflowform />);
+  };
 
   return (
     <>
-      {
-        <Modal setModal={(e) => setOpen(e)} open={open}>
-          <Workflowform />
-        </Modal>
-      }
-      <Button size={"icon"} onClick={() => setOpen(true)}>
-        <Plus />
+      <Button onClick={handleOpenModal} className={cn(buttonVariants({ variant: "outline" }))}>
+        New Workflow
       </Button>
     </>
   );
