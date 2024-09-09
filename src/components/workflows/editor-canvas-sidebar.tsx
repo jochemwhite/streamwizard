@@ -15,14 +15,13 @@ export default function WorkflowCanvasSidebar() {
   const handleTabChange = (value: string) => {
     dispatch({ type: "SET_SIDEBAR", payload: { sidebar: value as "triggers" | "actions" | "settings" } });
   };
-
+  const triggerAlreadyExists = state.editor.nodes.find((node) => node.type === "Trigger");
   return (
     <aside className="h-full relative">
       <Tabs defaultValue="triggers" value={state.editor.sidebar} onValueChange={handleTabChange} className="h-full bg-[#0A0A0A]">
         <div className="flex justify-between">
           <TabsList className="bg-transparent block">
-            <TabsTrigger value="triggers">Triggers</TabsTrigger>
-            <TabsTrigger value="actions">Actions</TabsTrigger>
+            {triggerAlreadyExists ? <TabsTrigger value="actions">Actions</TabsTrigger> : <TabsTrigger value="triggers">Triggers</TabsTrigger>}
             <TabsTrigger value="settings">Settings</TabsTrigger>
           </TabsList>
           <div>

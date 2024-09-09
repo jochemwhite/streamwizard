@@ -6,9 +6,10 @@ import ChannelpointsCustomRewardRedemptionAddSettings from "@/components/workflo
 import { SendChatMessageMetaData } from "@/schemas/workflow-node-settings";
 import { EditorCanvasDefaultCardType } from "@/types/workflow";
 import { MdControlPoint, MdOutlineMessage } from "react-icons/md";
-import { RiAdvertisementLine } from "react-icons/ri";
+import { RiAdvertisementLine, RiVipFill } from "react-icons/ri";
 import { FaBullhorn } from "react-icons/fa";
 import { FaParachuteBox } from "react-icons/fa6";
+import Select_user_id from "@/components/workflows/custom-settings/actions/select_user_id";
 
 export const EditorCanvasDefaultCard: EditorCanvasDefaultCardType = {
   twitch: {
@@ -87,6 +88,28 @@ export const EditorCanvasDefaultCard: EditorCanvasDefaultCardType = {
         } as SendChatMessageMetaData,
         icon: FaBullhorn,
       },
+      {
+        id: "",
+        title: "Add Channel VIP",
+        description: "Adds the specified user as a VIP in the broadcaster’s channel.",
+        type: "add_channel_vip",
+        nodeType: "Action",
+        metaData: {
+          user_id: "",
+        },
+        icon: RiVipFill,
+      },
+      {
+        id: "",
+        title: "Send a Shoutout",
+        description: "Sends a Shoutout to the specified broadcaster.",
+        type: "send_shoutout",
+        nodeType: "Action",
+        metaData: {
+          user_id: "",
+        },
+        icon: FaBullhorn,
+      },
     ],
 
     triggers: [
@@ -153,6 +176,30 @@ export const EditorCanvasDefaultCard: EditorCanvasDefaultCardType = {
           "viewers",
         ],
       },
+      {
+        id: "",
+        title: "Channel Shoutout Create",
+        description: "Sends a notification when the broadcaster sends a shoutout.",
+        type: "channel.shoutout.create",
+        nodeType: "Trigger",
+        event_id: null,
+        icon: FaBullhorn,
+        placeholders: [
+          "broadcaster_user_id",
+          "broadcaster_user_name",
+          "broadcaster_user_login",
+          "moderator_user_id",
+          "moderator_user_name",
+          "moderator_user_login",
+          "to_broadcaster_user_id",
+          "to_broadcaster_user_name",
+          "to_broadcaster_user_login",
+          "started_at",
+          "viewer_count",
+          "cooldown_ends_at",
+          "target_cooldown_ends_at",
+        ],
+      },
     ],
   },
   discord: {
@@ -166,5 +213,7 @@ export const NodeSettingsComponent = {
   custom_reward_update: CustomRewardUpdate,
   send_chat_message: SendChatMessage,
   send_chat_announcement: SendChatMessage,
+  "add_channel_vip": Select_user_id,
+  "send_shoutout": Select_user_id,
   "default-settings": DefaultSettings,
 };

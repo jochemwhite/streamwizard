@@ -118,7 +118,8 @@ export const TWITCH_SCOPES = [
   "user:bot",
   "channel:bot",
   "moderator:manage:announcements",
-  "moderator:manage:shoutouts"
+  "moderator:manage:shoutouts",
+  "channel:manage:vips"
 ];
 
 

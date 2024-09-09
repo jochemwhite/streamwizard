@@ -2,20 +2,30 @@ import type { Connection, Edge, EdgeChange, Node, NodeChange } from "@xyflow/rea
 import type React from "react";
 import { IconType } from "react-icons/lib";
 
-type TwitchTriggersTypes = "channel.channel_points_custom_reward_redemption.add" | "channel.ad_break.begin" | "channel.raid"
-type TwitchActionsTypes = "custom_reward_update" | "send_chat_message" | "get_ad_schedule" | "send_chat_announcement"
- 
+type TwitchTriggersTypes =
+  | "channel.channel_points_custom_reward_redemption.add"
+  | "channel.ad_break.begin"
+  | "channel.raid"
+  | "channel.shoutout.create"
+  | "channel.shoutout.receive";
+type TwitchActionsTypes =
+  | "custom_reward_update"
+  | "send_chat_message"
+  | "get_ad_schedule"
+  | "send_chat_announcement"
+  | "add_channel_vip"
+  | "remove_channel_vip"
+  | "get_channel_vip"
+  | "send_shoutout";
 
+type Actions = TwitchActionsTypes;
+type Triggers = TwitchTriggersTypes;
 
-type Actions = TwitchActionsTypes 
-type Triggers = TwitchTriggersTypes 
-
-export type integrationTypes = Actions | Triggers
+export type integrationTypes = Actions | Triggers;
 
 export type NodeTypes = "Action" | "Trigger";
 
 export type Metadata = Record<string, string>;
-
 
 export type WorkflowEditor = {
   nodes: Node[];
@@ -63,9 +73,9 @@ export type Trigger = {
   nodeType: NodeTypes;
   metaData?: Metadata;
   settingsComponent?: React.FC;
-  icon?: IconType
-  placeholders?: string[]
-  integration?: string
+  icon?: IconType;
+  placeholders?: string[];
+  integration?: string;
 };
 
 export type Action = {
@@ -75,7 +85,7 @@ export type Action = {
   type: Actions;
   nodeType: NodeTypes;
   metaData?: Metadata;
-  icon?: IconType
-  placeholders?: string[]
-  integration?: string
+  icon?: IconType;
+  placeholders?: string[];
+  integration?: string;
 };

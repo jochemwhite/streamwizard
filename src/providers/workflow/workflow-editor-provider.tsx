@@ -1,13 +1,12 @@
 "use client";
 
+import { SaveWorkflow } from "@/actions/workflows";
 import type { EditorActions, EditorState } from "@/types/workflow";
 import { addEdge, applyEdgeChanges, applyNodeChanges, OnConnect, OnEdgesChange, OnNodesChange } from "@xyflow/react";
 import { usePathname } from "next/navigation";
-import { createContext, Dispatch, use, useCallback, useEffect, useReducer } from "react";
+import { createContext, Dispatch, useCallback, useReducer } from "react";
 import { toast } from "sonner";
 import { setParentNodes, setSelectedNode, updateMetadata } from "./workflow-editor-actions";
-import { SaveWorkflow } from "@/actions/workflows";
-import { stat } from "fs";
 
 // update metadata based on node id
 
@@ -138,9 +137,7 @@ const WorkFlowEditorProvider = (props: EditorProps) => {
   const onConnect: OnConnect = useCallback((connection) => dispatch({ type: "ON_CONNECT", payload: { connection } }), [dispatch]);
 
   const handleSave = async () => {
-    console.log("handleSave");
     const path = pathname.split("/").pop();
-    console.log(path);
 
     const edges = JSON.stringify(state.editor.edges);
 
