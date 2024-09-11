@@ -5,17 +5,20 @@ import EditorCanvasIconHelper from "./editor-canvas-card-icon-hepler";
 import { MdOutlineMessage } from "react-icons/md";
 
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "@/components/ui/context-menu";
+import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuShortcut, ContextMenuTrigger } from "@/components/ui/context-menu";
 import { useEditor } from "@/hooks/UseWorkflowEditor";
 import { cn, getNode } from "@/lib/utils";
 import { Action, integrationTypes, NodeTypes } from "@/types/workflow";
 import { Position, useNodeId } from "@xyflow/react";
 import clsx from "clsx";
 import { Zap } from "lucide-react";
+import { useModal } from "@/providers/modal-provider";
+import ChannelRaidForm from "./trigger-forms/channel_raid_form";
 
 const EditorCanvasCardSingle = ({ data }: { data: Action }) => {
   const { dispatch, state } = useEditor();
   const [isSelcted, setIsSelected] = useState(false);
+  const {openModal, closeModal} = useModal();
   const nodeId = useNodeId();
 
   useEffect(() => {
@@ -24,8 +27,17 @@ const EditorCanvasCardSingle = ({ data }: { data: Action }) => {
     }
   }, [state.editor.selectedNode, nodeId]);
 
-  // TODO: Implement handleDelete
-  const handleDelete = () => {};
+  const handleDelete = () => {
+    if (nodeId) {
+      dispatch({ type: "DELETE_NODE", payload: { id: nodeId } });
+
+      if (data.nodeType === "Trigger") {
+        dispatch({ type: "SET_SIDEBAR", payload: { sidebar: "triggers" } });
+      } else {
+        dispatch({ type: "SET_SIDEBAR", payload: { sidebar: "actions" } });
+      }
+    }
+  };
 
   const Icon = () => {
     const nodeType = data.nodeType as NodeTypes;
@@ -38,9 +50,12 @@ const EditorCanvasCardSingle = ({ data }: { data: Action }) => {
       nodeType,
     });
 
-
-    return Node?.icon ? <Node.icon size={30}  /> : <Zap size={30} />
+    return Node?.icon ? <Node.icon size={30} /> : <Zap size={30} />;
   };
+
+  const handleTriggerClick = () => openModal(
+    <ChannelRaidForm />
+  )
 
   return (
     <ContextMenu>
@@ -79,8 +94,19 @@ const EditorCanvasCardSingle = ({ data }: { data: Action }) => {
         </Card>
         <CustomHandle type="source" position={Position.Bottom} id="a" />
       </ContextMenuTrigger>
-      <ContextMenuContent>
-        <ContextMenuItem onClick={handleDelete}>Delete</ContextMenuItem>
+      <ContextMenuContent className="w-64">
+        <ContextMenuItem inset onClick={handleDelete}>
+          See Details
+          <ContextMenuShortcut>alt + I</ContextMenuShortcut>
+        </ContextMenuItem>
+        <ContextMenuItem inset onClick={handleTriggerClick}>
+          Test Workflow
+          <ContextMenuShortcut>alt + T</ContextMenuShortcut>
+        </ContextMenuItem>
+        <ContextMenuItem inset onClick={handleDelete}>
+          Delete
+          <ContextMenuShortcut>Backspace</ContextMenuShortcut>
+        </ContextMenuItem>
       </ContextMenuContent>
     </ContextMenu>
   );

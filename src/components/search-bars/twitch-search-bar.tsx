@@ -1,31 +1,30 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import { searchChatter } from "@/actions/twitch/twitch-api";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { ChannelSearchResult } from "@/types/API/twitch";
-import { Button } from "../ui/button";
-import TwitchCard from "../hover-cards/twitch-card";
 import useBannedChatters from "@/hooks/useBannedChatter";
-import { useDebounce } from "@uidotdev/usehooks";
+import { ChannelSearchResult } from "@/types/API/twitch";
+import { useState } from "react";
 import { toast } from "sonner";
-import { searchChatter } from "@/actions/twitch/twitch-api";
+import TwitchCard from "../hover-cards/twitch-card";
+import { Button } from "../ui/button";
 import { SearchBar } from "../ui/search-bar";
 
 interface results extends ChannelSearchResult {
   exactMatch?: boolean;
 }
 
-export default function TwitchSearchBar() {
+interface Props {
+  placeholder: string;
+  action_label:string
+}
+
+
+export default function TwitchSearchBar({ placeholder, action_label }: Props) {
   const [results, setResults] = useState<results[]>([]);
 
-  const { banChatter } = useBannedChatters();
-
-  const handleBanChatter = async (chatter: { chatter_id: string; chatter_name: string }) => {
-    const data = banChatter(chatter);
-  };
-
   const search = async (searchTerm: string) => {
-    const data = await searchChatter(searchTerm, 5);
+    const data = await searchChatter(searchTerm, 3);
     if (data) {
       setResults(data);
 
@@ -57,7 +56,7 @@ export default function TwitchSearchBar() {
       results={results}
       setResults={setResults}
       search={search}
-      placeholder="Search for a chatter"
+      placeholder={placeholder}
       Component={() => (
         <Table>
           <TableHeader>
@@ -69,7 +68,7 @@ export default function TwitchSearchBar() {
               </TableHead>
             </TableRow>
           </TableHeader>
-          <TableBody>
+          <TableBody className="!h-[20px]">
             {results.map((channel) => (
               <TableRow key={channel.id}>
                 <TableCell className="font-medium">
@@ -89,14 +88,15 @@ export default function TwitchSearchBar() {
                 <TableCell>
                   <Button
                     variant="destructive"
+                    type="button"
                     onClick={() => {
-                      handleBanChatter({
-                        chatter_id: channel.id,
-                        chatter_name: channel.display_name,
-                      });
+                      // handleBanChatter({
+                      //   chatter_id: channel.id,
+                      //   chatter_name: channel.display_name,
+                      // });
                     }}
                   >
-                    Ban Chatter
+                    {action_label}
                   </Button>
                 </TableCell>
               </TableRow>

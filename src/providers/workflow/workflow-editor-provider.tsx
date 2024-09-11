@@ -106,6 +106,22 @@ const editorReducer = (state: EditorState = initialState, action: EditorActions)
         },
       };
 
+    case "DELETE_NODE":
+      const new_nodes = state.editor.nodes.filter((node) => node.id !== action.payload.id);
+      const new_selected_node = setSelectedNode(new_nodes, null);
+
+      // delete all edges that have this node
+      const new_edges = state.editor.edges.filter((edge) => edge.source !== action.payload.id && edge.target !== action.payload.id);
+      return {
+        ...state,
+        editor: {
+          ...state.editor,
+          nodes: new_nodes,
+          edges: new_edges,
+          selectedNode: new_selected_node,
+        },
+      };
+
     default:
       return state;
   }

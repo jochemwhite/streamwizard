@@ -55,7 +55,8 @@ export type EditorActions =
   | { type: "UPDATE_EDGES"; payload: { edges: EdgeChange[] } }
   | { type: "ON_CONNECT"; payload: { connection: Connection } }
   | { type: "ADD_NODE"; payload: { node: Node } }
-  | { type: "SET_SIDEBAR"; payload: { sidebar: "triggers" | "actions" | "settings" } };
+  | { type: "SET_SIDEBAR"; payload: { sidebar: "triggers" | "actions" | "settings" } }
+  | { type: "DELETE_NODE"; payload: { id: string } };
 
 export type EditorCanvasDefaultCardType = {
   [provider: string]: {

@@ -1,5 +1,4 @@
 "use client";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { useDebounce } from "@uidotdev/usehooks";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useEffect, useState } from "react";
@@ -44,29 +43,25 @@ export function SearchBar({ setResults, Component, results, search, placeholder 
   };
 
   return (
-    <Card className="w-full relative  ">
-      <CardHeader className="relative">
-        <Input id="name" placeholder={placeholder ? placeholder : "Search here "} onChange={(e) => handleChange(e.target.value)} value={searchTerm} />
-        <span className="absolute right-8 w-6 h-6 mx-auto mt-1">{isSearching && <LoadingSpinner />}</span>
-      </CardHeader>
+    <div className="relative">
+      <Input id="name" placeholder={placeholder ? placeholder : "Search here "} onChange={(e) => handleChange(e.target.value)} value={searchTerm}  />
+      <span className="absolute top-0 right-8 w-6 h-6 mx-auto mt-2">{isSearching && <LoadingSpinner />}</span>
 
-      <AnimatePresence mode="wait">
+      <AnimatePresence mode="wait" >
         {results && results.length > 0 && (
           <ClickAwayListener onClickAway={handleClickAway}>
-            <CardContent className="overflow-hidden absolute w-full !p-0  z-50">
-              <motion.div
-                initial={{ y: -400, opacity: 1 }}
-                animate={{ y: 0, opacity: 1 }}
-                exit={{ y: -400, opacity: 1 }}
-                transition={{ type: "just", duration: 0.2 }}
-                className=" w-full border rounded mt-4 bg-[#0D0D0D]"
-              >
-                <Component />
-              </motion.div>
-            </CardContent>
+            <motion.div
+              initial={{ y: -400, opacity: 1 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: -400, opacity: 1 }}
+              transition={{ type: "just", duration: 0.2 }}
+              className=" absolute w-full border rounded mt-4 bg-[#0D0D0D]"
+            >
+              <Component />
+            </motion.div>
           </ClickAwayListener>
         )}
       </AnimatePresence>
-    </Card>
+    </div>
   );
 }

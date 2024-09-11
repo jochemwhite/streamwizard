@@ -33,7 +33,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
     signIn: async ({ account, user }) => {
       const hasEvents = await checkTwitchSubscriptions(account!.providerAccountId);
-      
 
       if (!account) return "/unauthorized";
 
@@ -82,10 +81,7 @@ async function checkTwitchSubscriptions(user_id: string): Promise<boolean> {
 
     const subscriptions = TwitchEventSubscriptions(user_id);
 
-
     const missingSubs = subscriptions.map((sub) => sub.type).filter((sub) => !res.data.data.some((data) => data.type === sub));
-
-
 
     if (missingSubs.length > 0) {
       await Promise.all(
