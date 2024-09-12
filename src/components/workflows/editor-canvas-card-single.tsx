@@ -14,11 +14,15 @@ import clsx from "clsx";
 import { Zap } from "lucide-react";
 import { useModal } from "@/providers/modal-provider";
 import ChannelRaidForm from "./trigger-forms/channel_raid_form";
+import { useSession } from "next-auth/react";
 
 const EditorCanvasCardSingle = ({ data }: { data: Action }) => {
+  const { data: session } = useSession();
+  if (!session) return null;
+
   const { dispatch, state } = useEditor();
   const [isSelcted, setIsSelected] = useState(false);
-  const {openModal, closeModal} = useModal();
+  const { openModal, closeModal } = useModal();
   const nodeId = useNodeId();
 
   useEffect(() => {
@@ -53,9 +57,10 @@ const EditorCanvasCardSingle = ({ data }: { data: Action }) => {
     return Node?.icon ? <Node.icon size={30} /> : <Zap size={30} />;
   };
 
-  const handleTriggerClick = () => openModal(
-    <ChannelRaidForm />
-  )
+  const handleTriggerClick = () =>
+    openModal(
+      <ChannelRaidForm broadcaster_display_name={session.user.name!} broadcaster_id={session.user.channel_id} JWT={session.supabaseAccessToken!} />
+    );
 
   return (
     <ContextMenu>

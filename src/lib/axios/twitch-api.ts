@@ -1,4 +1,5 @@
 "use server";
+import { env } from "../env";
 
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import axios from "axios";
@@ -7,7 +8,7 @@ const TwitchAPI = axios.create({
   baseURL: "https://api.twitch.tv/helix",
   headers: {
     Accept: "application/json",
-    "Client-ID": process.env.NEXT_PUBLIC_TWITCH_CLIENT_ID,
+    "Client-ID": env.NEXT_PUBLIC_TWITCH_CLIENT_ID,
   },
 });
 
@@ -75,7 +76,7 @@ async function RefreshToken(refreshToken: string, broadcaster_id: number): Promi
   console.error("refreshing token");
   try {
     const res = await axios.post(
-      `https://id.twitch.tv/oauth2/token?client_id=${process.env.NEXT_PUBLIC_TWITCH_CLIENT_ID}&client_secret=${process.env.TWITCH_CLIENT_SECRET}&grant_type=refresh_token&refresh_token=${refreshToken}`
+      `https://id.twitch.tv/oauth2/token?client_id=${env.NEXT_PUBLIC_TWITCH_CLIENT_ID}&client_secret=${env.TWITCH_CLIENT_SECRET}&grant_type=refresh_token&refresh_token=${refreshToken}`
     );
 
     const { error } = await supabaseAdmin

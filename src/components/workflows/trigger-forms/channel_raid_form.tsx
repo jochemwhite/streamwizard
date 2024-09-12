@@ -1,16 +1,17 @@
 "use client";
 
-import { useState } from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
+import TwitchSearchBar from "@/components/search-bars/twitch-search-bar";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { ChannelSearchResult } from "@/types/API/twitch";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import TwitchSearchBar from "@/components/search-bars/twitch-search-bar";
-
+import * as z from "zod";
+import axios from "axios";
+import { env } from "@/lib/env";
 const formSchema = z.object({
   from_broadcaster_user_id: z.string().min(1, "User ID is required"),
   from_broadcaster_user_login: z.string().min(1, "User login is required"),
@@ -21,34 +22,48 @@ const formSchema = z.object({
   viewers: z.number().int().positive("Viewer count must be a positive integer"),
 });
 
-export default function ChannelRaidForm() {
+interface Props {
+  broadcaster_id: string;
+  broadcaster_display_name: string;
+  JWT: string
+}
+
+export default function ChannelRaidForm({ broadcaster_id, broadcaster_display_name, JWT }: Props) {
   const [isLoading, setIsLoading] = useState(false);
+
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      from_broadcaster_user_id: "1234",
-      from_broadcaster_user_login: "cool_user",
-      from_broadcaster_user_name: "Cool_User",
-      to_broadcaster_user_id: "1337",
-      to_broadcaster_user_login: "cooler_user",
-      to_broadcaster_user_name: "Cooler_User",
-      viewers: 9001,
+      from_broadcaster_user_id: "12826",
+      from_broadcaster_user_login: "twitch",
+      from_broadcaster_user_name: "Twitch",
+      to_broadcaster_user_id: broadcaster_id,
+      to_broadcaster_user_login: broadcaster_display_name.toLowerCase(),
+      to_broadcaster_user_name: broadcaster_display_name,
+      viewers: 50,
     },
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    setIsLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
-      console.log(values);
-      // toast({
-      //   title: "Form submitted",
-      //   description: "The broadcaster information has been updated.",
-      // })
-    }, 1000);
+    toast.promise(async () => {
+      const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL!}/workflow/test`, values, {
+        headers: {
+          supabasejwt: JWT,
+        },
+      });
+    }, {
+      loading: "Testing workflow ...",
+      success: "Raided stream",
+      error: "Error raiding stream",
+    });
   }
+
+  const handleSelect = (data: ChannelSearchResult) => {
+    form.setValue("to_broadcaster_user_id", data.id);
+    form.setValue("to_broadcaster_user_login", data.display_name.toLowerCase());
+    form.setValue("to_broadcaster_user_name", data.display_name);
+  };
 
   return (
     <Form {...form}>
@@ -61,8 +76,9 @@ export default function ChannelRaidForm() {
               <FormItem>
                 <FormLabel>From Broadcaster</FormLabel>
                 <FormControl>
-                  <TwitchSearchBar action_label="Select broadcaster" placeholder="Jochemwhite" />
+                  <TwitchSearchBar onSelect={handleSelect} />
                 </FormControl>
+                <FormDescription>Who is raiding the stream.</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -71,13 +87,15 @@ export default function ChannelRaidForm() {
         <div className="space-y-4">
           <FormField
             control={form.control}
+            disabled
             name="to_broadcaster_user_id"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>To Broadcaster </FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter user ID" {...field} />
+                  <TwitchSearchBar disabled placeholder={broadcaster_display_name} />
                 </FormControl>
+                <FormDescription>Who is getting the raid.</FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -98,7 +116,7 @@ export default function ChannelRaidForm() {
           )}
         />
         <Button type="submit" className="w-full" disabled={isLoading}>
-          {isLoading ? "Updating..." : "Update Broadcaster Information"}
+          Test Workflow
         </Button>
       </form>
     </Form>

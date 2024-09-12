@@ -1,20 +1,22 @@
+import axios from "axios";
 import jwt from "jsonwebtoken";
 import NextAuth from "next-auth";
 import authConfig from "./auth.config";
 import { env } from "./lib/env";
-import axios from "axios";
+import { supabaseAdmin } from "./lib/supabase/admin";
 import { TwitchEventSubscriptions } from "./lib/utils";
 import { GetEventSubSubscriptionsResponse } from "./types/API/twitch";
-import { supabaseAdmin } from "./lib/supabase/admin";
 
-const { SUPABASE_JWT_SECRET } = env;
+const {SUPABASE_JWT_SECRET, TWITCH_APP_TOKEN, NEXT_PUBLIC_TWITCH_CLIENT_ID} = env
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   ...authConfig,
   // debug: true,
   callbacks: {
     async session({ session, user }) {
-      const signingSecret = SUPABASE_JWT_SECRET;
+
+
+      const signingSecret = SUPABASE_JWT_SECRET
 
       const payload = {
         aud: "authenticated",
@@ -74,8 +76,8 @@ async function checkTwitchSubscriptions(user_id: string): Promise<boolean> {
         user_id: user_id,
       },
       headers: {
-        Authorization: `Bearer ${env.TWITCH_APP_TOKEN}`,
-        "Client-Id": env.NEXT_PUBLIC_TWITCH_CLIENT_ID,
+        Authorization: `Bearer ${TWITCH_APP_TOKEN}`,
+        "Client-Id": NEXT_PUBLIC_TWITCH_CLIENT_ID,
       },
     });
 
@@ -97,8 +99,8 @@ async function checkTwitchSubscriptions(user_id: string): Promise<boolean> {
             },
             {
               headers: {
-                Authorization: `Bearer ${env.TWITCH_APP_TOKEN}`,
-                "Client-Id": env.NEXT_PUBLIC_TWITCH_CLIENT_ID,
+                Authorization: `Bearer ${TWITCH_APP_TOKEN}`,
+                "Client-Id": NEXT_PUBLIC_TWITCH_CLIENT_ID,
               },
             }
           )

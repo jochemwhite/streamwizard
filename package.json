@@ -33,6 +33,7 @@
     "@radix-ui/react-tooltip": "^1.0.7",
     "@supabase/ssr": "^0.3.0",
     "@supabase/supabase-js": "^2.43.4",
+    "@t3-oss/env-nextjs": "^0.11.1",
     "@tanstack/react-table": "^8.20.1",
     "@types/jsonwebtoken": "^9.0.6",
     "@udecode/cn": "^33.0.0",
@@ -66,7 +67,7 @@
     "tailwindcss-animate": "^1.0.7",
     "uuid": "^10.0.0",
     "vaul": "^0.9.0",
-    "zod": "^3.23.3",
+    "zod": "^3.23.8",
     "zustand": "^4.5.4"
   },
   "devDependencies": {

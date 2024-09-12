@@ -31,10 +31,7 @@ export async function searchChatter(value: string, first: number = 10) {
         first: first,
       },
 
-      headers: {
-        Authorization: `Bearer ${data.access_token}`,
-        "client-id": process.env.NEXT_PUBLIC_TWITCH_CLIENT_ID,
-      },
+
       broadcasterID: +data.broadcaster_id,
     });
     return res.data.data;

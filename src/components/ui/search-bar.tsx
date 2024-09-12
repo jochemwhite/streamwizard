@@ -12,9 +12,10 @@ interface Props {
   Component: React.FC;
   search: (searchTerm: string) => Promise<void>;
   placeholder?: string;
+  disabled? : boolean;
 }
 
-export function SearchBar({ setResults, Component, results, search, placeholder }: Props) {
+export function SearchBar({ setResults, Component, results, search, placeholder, disabled }: Props) {
   const [isSearching, setIsSearching] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
@@ -43,22 +44,26 @@ export function SearchBar({ setResults, Component, results, search, placeholder 
   };
 
   return (
-    <div className="relative">
-      <Input id="name" placeholder={placeholder ? placeholder : "Search here "} onChange={(e) => handleChange(e.target.value)} value={searchTerm}  />
-      <span className="absolute top-0 right-8 w-6 h-6 mx-auto mt-2">{isSearching && <LoadingSpinner />}</span>
+    <div className="w-full relative  ">
+      <div className="relative">
+        <Input id="name" disabled={disabled} placeholder={placeholder ? placeholder : "Search here "} onChange={(e) => handleChange(e.target.value)} value={searchTerm} />
+        <span className="absolute right-8 w-6 h-6 mx-auto mt-1">{isSearching && <LoadingSpinner />}</span>
+      </div>
 
-      <AnimatePresence mode="wait" >
+      <AnimatePresence mode="wait">
         {results && results.length > 0 && (
           <ClickAwayListener onClickAway={handleClickAway}>
-            <motion.div
-              initial={{ y: -400, opacity: 1 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: -400, opacity: 1 }}
-              transition={{ type: "just", duration: 0.2 }}
-              className=" absolute w-full border rounded mt-4 bg-[#0D0D0D]"
-            >
-              <Component />
-            </motion.div>
+            <div className="overflow-hidden absolute w-full !p-0  z-50">
+              <motion.div
+                initial={{ y: -400, opacity: 1 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: -400, opacity: 1 }}
+                transition={{ type: "just", duration: 0.2 }}
+                className=" w-full border rounded mt-4 bg-[#0D0D0D]"
+              >
+                <Component />
+              </motion.div>
+            </div>
           </ClickAwayListener>
         )}
       </AnimatePresence>
