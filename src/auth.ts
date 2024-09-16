@@ -7,32 +7,13 @@ import { supabaseAdmin } from "./lib/supabase/admin";
 import { TwitchEventSubscriptions } from "./lib/utils";
 import { GetEventSubSubscriptionsResponse } from "./types/API/twitch";
 
-const {SUPABASE_JWT_SECRET, TWITCH_APP_TOKEN, NEXT_PUBLIC_TWITCH_CLIENT_ID} = env
+const { SUPABASE_JWT_SECRET, TWITCH_APP_TOKEN, NEXT_PUBLIC_TWITCH_CLIENT_ID } = env;
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   ...authConfig,
   // debug: true,
+  
   callbacks: {
-    async session({ session, user }) {
-
-
-      const signingSecret = SUPABASE_JWT_SECRET
-
-      const payload = {
-        aud: "authenticated",
-        exp: Math.floor(new Date(session.expires).getTime() / 1000),
-        sub: user.id,
-        email: user.email,
-        role: "authenticated",
-      };
-      session.supabaseAccessToken = jwt.sign(payload, signingSecret);
-      const { data } = await supabaseAdmin.from("users").select("*").eq("id", user.id).single();
-
-      session.user.role = data?.role || "user";
-
-      return session;
-    },
-
     signIn: async ({ account, user }) => {
       const hasEvents = await checkTwitchSubscriptions(account!.providerAccountId);
 
@@ -63,7 +44,41 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         return "/unauthorized?error=not-whitelisted";
       }
 
+      user.broadcaster_id = account.providerAccountId;
+
+
       return true;
+    },
+
+    async jwt({ token, user, account }) {
+      if (account) {
+        token.id = user.id
+        token.broadcaster_id = account?.providerAccountId
+      }
+      return token
+    },
+
+    async session({ session, token }) {
+      if (token) {
+        session.user = session.user || {}
+        session.user.id = token.id as string
+        session.user.broadcaster_id = token.broadcaster_id 
+
+        const signingSecret = process.env.SUPABASE_JWT_SECRET!
+
+        const payload = {
+          aud: "authenticated",
+          exp: Math.floor(new Date(session.expires).getTime() / 1000),
+          sub: token.sub,
+          email: token.email,
+          role: "authenticated",
+        }
+
+        session.supabaseAccessToken = jwt.sign(payload, signingSecret)
+      }
+
+      // console.log(session)
+      return session
     },
   },
 });
@@ -94,7 +109,7 @@ async function checkTwitchSubscriptions(user_id: string): Promise<boolean> {
               ...subscriptions.find((subscription) => subscription.type === sub),
               transport: {
                 method: "conduit",
-                conduit_id: "d76b9935-da70-4ccb-87cd-e9e899986cc8",
+                conduit_id: env.CONDUIT_ID,
               },
             },
             {

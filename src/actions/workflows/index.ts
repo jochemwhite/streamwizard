@@ -25,7 +25,7 @@ export const getWorkflowByID = async (workflowId: string) => {
   const session = await auth();
   const supabase = createClient(session?.supabaseAccessToken as string);
 
-  const { data, error } = await supabase.from("workflows").select("nodes, edges").match({ id: workflowId }).single();
+  const { data, error } = await supabase.from("workflows").select("*").match({ id: workflowId }).single();
 
   if (error) {
     throw error.message;

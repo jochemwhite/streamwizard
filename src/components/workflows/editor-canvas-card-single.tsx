@@ -8,7 +8,7 @@ import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/ca
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuShortcut, ContextMenuTrigger } from "@/components/ui/context-menu";
 import { useEditor } from "@/hooks/UseWorkflowEditor";
 import { cn, getNode } from "@/lib/utils";
-import { Action, integrationTypes, NodeTypes } from "@/types/workflow";
+import { Action, ErrorLogs, integrationTypes, NodeTypes } from "@/types/workflow";
 import { Position, useNodeId } from "@xyflow/react";
 import clsx from "clsx";
 import { Zap } from "lucide-react";
@@ -22,8 +22,12 @@ const EditorCanvasCardSingle = ({ data }: { data: Action }) => {
 
   const { dispatch, state } = useEditor();
   const [isSelcted, setIsSelected] = useState(false);
-  const { openModal, closeModal } = useModal();
+  const { openModal } = useModal();
   const nodeId = useNodeId();
+
+  const update_logs = (error?: ErrorLogs, responses?: Record<string, string>) => {
+    dispatch({ type: "UPDATE_LOGS", payload: { logs: { node_errors: error, node_responses: responses, started_at: new Date() } } });
+  };
 
   useEffect(() => {
     if (state.editor.selectedNode) {
@@ -59,7 +63,13 @@ const EditorCanvasCardSingle = ({ data }: { data: Action }) => {
 
   const handleTriggerClick = () =>
     openModal(
-      <ChannelRaidForm broadcaster_display_name={session.user.name!} broadcaster_id={session.user.channel_id} JWT={session.supabaseAccessToken!} />
+      <ChannelRaidForm
+        broadcaster_display_name={session.user.name!}
+        broadcaster_id={session.user.broadcaster_id}
+        JWT={session.supabaseAccessToken!}
+        workflow={state.editor.workflowDetails}
+        update_logs={update_logs}
+      />
     );
 
   return (

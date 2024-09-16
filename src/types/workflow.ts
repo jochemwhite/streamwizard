@@ -27,12 +27,33 @@ export type NodeTypes = "Action" | "Trigger";
 
 export type Metadata = Record<string, string>;
 
+export type ErrorLogs = {
+  error_message: string;
+  shouldTurnOffWorkflow: boolean;
+  originalError: Error;
+};
+
+export type logs = {
+  started_at: Date;
+  node_responses?: Record<string, string>;
+  node_errors?: ErrorLogs;
+};
+
+export type workflowDetails = {
+  workflow_id: string;
+  name: string;
+  description: string;
+  user_id: string;
+};
+
 export type WorkflowEditor = {
   nodes: Node[];
   edges: Edge[];
+  logs: logs[];
   selectedNode: Node | null;
   parentNodes: Node[] | null;
-  sidebar: "triggers" | "actions" | "settings";
+  sidebar: "triggers" | "actions" | "settings" | "logs";
+  workflowDetails: workflowDetails;
 };
 export type EditorState = {
   editor: WorkflowEditor;
@@ -47,7 +68,7 @@ export type EditorCanvasCardType = {
 };
 
 export type EditorActions =
-  | { type: "LOAD_DATA"; payload: { nodes: Node[]; edges: Edge[] } }
+  | { type: "LOAD_DATA"; payload: { nodes: Node[]; edges: Edge[]; workflowDetails: workflowDetails } }
   | { type: "UPDATE_NODE"; payload: { nodes: Node } }
   | { type: "SELECTED_NODE"; payload: { id: string | null } }
   | { type: "UPDATE_METADATA"; payload: { id: string; metadata: Metadata } }
@@ -56,7 +77,8 @@ export type EditorActions =
   | { type: "ON_CONNECT"; payload: { connection: Connection } }
   | { type: "ADD_NODE"; payload: { node: Node } }
   | { type: "SET_SIDEBAR"; payload: { sidebar: "triggers" | "actions" | "settings" } }
-  | { type: "DELETE_NODE"; payload: { id: string } };
+  | { type: "DELETE_NODE"; payload: { id: string } }
+  | { type: "UPDATE_LOGS"; payload: { logs?: logs } };
 
 export type EditorCanvasDefaultCardType = {
   [provider: string]: {

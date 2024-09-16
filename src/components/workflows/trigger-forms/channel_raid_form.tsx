@@ -4,14 +4,17 @@ import TwitchSearchBar from "@/components/search-bars/twitch-search-bar";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useEditor } from "@/hooks/UseWorkflowEditor";
+import { useModal } from "@/providers/modal-provider";
 import { ChannelSearchResult } from "@/types/API/twitch";
+import { ErrorLogs, workflowDetails } from "@/types/workflow";
 import { zodResolver } from "@hookform/resolvers/zod";
+import axios from "axios";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
-import axios from "axios";
-import { env } from "@/lib/env";
+
 const formSchema = z.object({
   from_broadcaster_user_id: z.string().min(1, "User ID is required"),
   from_broadcaster_user_login: z.string().min(1, "User login is required"),
@@ -25,12 +28,15 @@ const formSchema = z.object({
 interface Props {
   broadcaster_id: string;
   broadcaster_display_name: string;
-  JWT: string
+  JWT: string;
+  workflow: workflowDetails;
+  update_logs: (error?: ErrorLogs, responses?: Record<string, string>) => void;
 }
 
-export default function ChannelRaidForm({ broadcaster_id, broadcaster_display_name, JWT }: Props) {
+export default function ChannelRaidForm({ broadcaster_id, broadcaster_display_name, JWT, workflow, update_logs }: Props) {
+  "use no memo";
+  const { closeModal } = useModal();
   const [isLoading, setIsLoading] = useState(false);
-
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -46,28 +52,57 @@ export default function ChannelRaidForm({ broadcaster_id, broadcaster_display_na
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    toast.promise(async () => {
-      const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL!}/workflow/test`, values, {
-        headers: {
-          supabasejwt: JWT,
+    closeModal();
+    toast.promise(
+      async () => {
+        await axios.post(
+          `http://localhost:8000/workflow/test`,
+          {
+            workflow_id: workflow.workflow_id,
+            user_id: workflow.user_id,
+            trigger_details: JSON.stringify(values),
+            broadcaster_id: broadcaster_id,
+          },
+          {
+            headers: {
+              Authorization: JWT,
+            },
+          }
+        );
+      },
+      {
+        loading: "Testing workflow ...",
+        success: "Raided stream",
+
+        error(error) {
+          update_logs(error.response.data.node_errors, error.response.data.responseData);
+          return (
+            <div className="flex items-center">
+              <span>{error.response.data.message}</span>
+              <Button variant="link" className="ml-2" onClick={() => {}}>
+                View Logs
+              </Button>
+            </div>
+          );
         },
-      });
-    }, {
-      loading: "Testing workflow ...",
-      success: "Raided stream",
-      error: "Error raiding stream",
-    });
+      }
+    );
   }
 
   const handleSelect = (data: ChannelSearchResult) => {
-    form.setValue("to_broadcaster_user_id", data.id);
-    form.setValue("to_broadcaster_user_login", data.display_name.toLowerCase());
-    form.setValue("to_broadcaster_user_name", data.display_name);
+    form.setValue("from_broadcaster_user_id", data.id);
+    form.setValue("from_broadcaster_user_login", data.display_name.toLowerCase());
+    form.setValue("from_broadcaster_user_name", data.display_name);
   };
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form
+        onSubmit={form.handleSubmit(onSubmit, (error) => {
+          console.log(error);
+        })}
+        className="space-y-8"
+      >
         <div className="space-y-4">
           <FormField
             control={form.control}
@@ -85,21 +120,7 @@ export default function ChannelRaidForm({ broadcaster_id, broadcaster_display_na
           />
         </div>
         <div className="space-y-4">
-          <FormField
-            control={form.control}
-            disabled
-            name="to_broadcaster_user_id"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>To Broadcaster </FormLabel>
-                <FormControl>
-                  <TwitchSearchBar disabled placeholder={broadcaster_display_name} />
-                </FormControl>
-                <FormDescription>Who is getting the raid.</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <TwitchSearchBar disabled placeholder={broadcaster_display_name} />
         </div>
         <FormField
           control={form.control}

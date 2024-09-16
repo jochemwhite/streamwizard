@@ -13,9 +13,12 @@ import { setParentNodes, setSelectedNode, updateMetadata } from "./workflow-edit
 const initialEditorState: EditorState["editor"] = {
   nodes: [],
   edges: [],
+  logs: [],
   selectedNode: null,
   parentNodes: null,
   sidebar: "triggers",
+  workflowDetails: { workflow_id: "", name: "", description: "", user_id: "" },
+
 };
 
 const initialState: EditorState = {
@@ -31,6 +34,7 @@ const editorReducer = (state: EditorState = initialState, action: EditorActions)
           ...state.editor,
           nodes: action.payload.nodes || initialEditorState.nodes,
           edges: action.payload.edges || initialEditorState.edges,
+          workflowDetails: action.payload.workflowDetails || initialEditorState.workflowDetails,
         },
       };
 
@@ -119,6 +123,18 @@ const editorReducer = (state: EditorState = initialState, action: EditorActions)
           nodes: new_nodes,
           edges: new_edges,
           selectedNode: new_selected_node,
+        },
+      };
+
+    case "UPDATE_LOGS":
+      if(!action.payload.logs) return state
+      return {
+        ...state,
+
+        editor: {
+          ...state.editor,
+          logs: [...state.editor.logs, action.payload.logs],
+          
         },
       };
 

@@ -7,6 +7,9 @@ import { env } from "./lib/env";
 const {NEXT_PUBLIC_TWITCH_CLIENT_ID, TWITCH_CLIENT_SECRET, NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY} = env
 
 export default {
+  session: {
+    strategy: "jwt",
+  },
   providers: [
     TwitchProvider({
       clientId: NEXT_PUBLIC_TWITCH_CLIENT_ID,
@@ -28,3 +31,4 @@ export default {
 
 
 } satisfies NextAuthConfig;
+

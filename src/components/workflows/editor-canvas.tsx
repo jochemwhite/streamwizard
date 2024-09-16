@@ -149,7 +149,20 @@ export default function WorkflowEditorCanvas() {
     if (response && response.nodes && response.edges) {
       const nodes = JSON.parse(response.nodes!);
       const edges = JSON.parse(response.edges!);
-      dispatch({ type: "LOAD_DATA", payload: { nodes, edges } });
+
+      dispatch({
+        type: "LOAD_DATA",
+        payload: {
+          nodes,
+          edges,
+          workflowDetails: {
+            description: response.description,
+            name: response.name,
+            user_id: response.user_id!,
+            workflow_id: response.id!,
+          },
+        },
+      });
 
       setIsWorkFlowLoading(false);
     }

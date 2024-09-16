@@ -8,6 +8,7 @@ import { EditorCanvasDefaultCard, NodeSettingsComponent } from "@/lib/workflow-c
 import { Zap } from "lucide-react";
 import RenderOutputAccordion from "./render-output-accordian";
 import { onDragStart } from "@/lib/utils";
+import LogList from "./log-list";
 
 export default function WorkflowCanvasSidebar() {
   const { state, handleSave, dispatch } = useEditor();
@@ -23,6 +24,7 @@ export default function WorkflowCanvasSidebar() {
           <TabsList className="bg-transparent block">
             {triggerAlreadyExists ? <TabsTrigger value="actions">Actions</TabsTrigger> : <TabsTrigger value="triggers">Triggers</TabsTrigger>}
             <TabsTrigger value="settings">Settings</TabsTrigger>
+            <TabsTrigger value="logs">Logs</TabsTrigger>
           </TabsList>
           <div>
             <Button type="button" className="text-white" onClick={() => handleSave()}>
@@ -92,6 +94,9 @@ export default function WorkflowCanvasSidebar() {
                 }
               />
             </div>
+          </TabsContent>
+          <TabsContent value="logs">
+            <div className="px-4 ">{state.editor.logs.length > 0 ? <LogList /> : <div className="text-white">No logs</div>}</div>
           </TabsContent>
         </div>
       </Tabs>
