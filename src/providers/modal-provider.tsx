@@ -61,17 +61,17 @@ interface ModalProps {
 
 const Modal: React.FC<ModalProps> = ({ children, closeModal, isOpen }) => {
   // Close modal on ESC key press
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        closeModal();
-      }
-    };
-    document.addEventListener("keydown", handleKeyDown);
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [closeModal]);
+  // useEffect(() => {
+  //   const handleKeyDown = (event: KeyboardEvent) => {
+  //     if (event.key === "Escape") {
+  //       closeModal();
+  //     }
+  //   };
+  //   document.addEventListener("keydown", handleKeyDown);
+  //   return () => {
+  //     document.removeEventListener("keydown", handleKeyDown);
+  //   };
+  // }, [closeModal]);
 
   return (
     <AnimatePresence>
@@ -81,7 +81,7 @@ const Modal: React.FC<ModalProps> = ({ children, closeModal, isOpen }) => {
           animate={{ opacity: 1, backdropFilter: "blur(10px)" }}
           exit={{ opacity: 0, backdropFilter: "blur(0px)" }}
           className="fixed inset-0 h-full w-full flex items-center justify-center z-50"
-          onClick={closeModal} // Close when clicking the background
+          // onClick={closeModal} // Close when clicking the background
         >
           <motion.div
             initial={{ opacity: 0 }}

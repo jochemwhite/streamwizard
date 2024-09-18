@@ -8,7 +8,7 @@ import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/ca
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuShortcut, ContextMenuTrigger } from "@/components/ui/context-menu";
 import { useEditor } from "@/hooks/UseWorkflowEditor";
 import { cn, getNode } from "@/lib/utils";
-import { Action, ErrorLogs, integrationTypes, NodeTypes } from "@/types/workflow";
+import { Action, ErrorLogs, integrationTypes, logs, NodeTypes } from "@/types/workflow";
 import { Position, useNodeId } from "@xyflow/react";
 import clsx from "clsx";
 import { Zap } from "lucide-react";
@@ -25,8 +25,8 @@ const EditorCanvasCardSingle = ({ data }: { data: Action }) => {
   const { openModal } = useModal();
   const nodeId = useNodeId();
 
-  const update_logs = (error?: ErrorLogs, responses?: Record<string, string>) => {
-    dispatch({ type: "UPDATE_LOGS", payload: { logs: { node_errors: error, node_responses: responses, started_at: new Date() } } });
+  const update_logs = (Logs: logs[]) => {
+    dispatch({ type: "UPDATE_LOGS", payload: { logs: Logs } });
   };
 
   useEffect(() => {

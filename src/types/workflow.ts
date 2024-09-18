@@ -34,9 +34,11 @@ export type ErrorLogs = {
 };
 
 export type logs = {
+  node_id: string;
+  message: string;
+  status: "success" | "error" | "warning";
   started_at: Date;
-  node_responses?: Record<string, string>;
-  node_errors?: ErrorLogs;
+  data?: any;
 };
 
 export type workflowDetails = {
@@ -78,7 +80,7 @@ export type EditorActions =
   | { type: "ADD_NODE"; payload: { node: Node } }
   | { type: "SET_SIDEBAR"; payload: { sidebar: "triggers" | "actions" | "settings" } }
   | { type: "DELETE_NODE"; payload: { id: string } }
-  | { type: "UPDATE_LOGS"; payload: { logs?: logs } };
+  | { type: "UPDATE_LOGS"; payload: { logs?: logs[] } };
 
 export type EditorCanvasDefaultCardType = {
   [provider: string]: {

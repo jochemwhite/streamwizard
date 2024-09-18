@@ -1,17 +1,19 @@
 "use client";
 
+import TriggerWorkflow from "@/actions/backend";
 import TwitchSearchBar from "@/components/search-bars/twitch-search-bar";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useEditor } from "@/hooks/UseWorkflowEditor";
 import { useModal } from "@/providers/modal-provider";
 import { ChannelSearchResult } from "@/types/API/twitch";
-import { ErrorLogs, workflowDetails } from "@/types/workflow";
+import { logs, workflowDetails } from "@/types/workflow";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { IoIosWarning } from "react-icons/io";
+import { MdError } from "react-icons/md";
 import { toast } from "sonner";
 import * as z from "zod";
 
@@ -30,7 +32,7 @@ interface Props {
   broadcaster_display_name: string;
   JWT: string;
   workflow: workflowDetails;
-  update_logs: (error?: ErrorLogs, responses?: Record<string, string>) => void;
+  update_logs: (Logs: logs[]) => void;
 }
 
 export default function ChannelRaidForm({ broadcaster_id, broadcaster_display_name, JWT, workflow, update_logs }: Props) {
@@ -54,36 +56,43 @@ export default function ChannelRaidForm({ broadcaster_id, broadcaster_display_na
   function onSubmit(values: z.infer<typeof formSchema>) {
     closeModal();
     toast.promise(
-      async () => {
-        await axios.post(
-          `http://localhost:8000/workflow/test`,
-          {
-            workflow_id: workflow.workflow_id,
-            user_id: workflow.user_id,
-            trigger_details: JSON.stringify(values),
-            broadcaster_id: broadcaster_id,
-          },
-          {
-            headers: {
-              Authorization: JWT,
-            },
-          }
-        );
-      },
+      TriggerWorkflow({
+        workflow_id: workflow.workflow_id,
+        user_id: workflow.user_id,
+        trigger_details: JSON.stringify(values),
+        broadcaster_id: broadcaster_id,
+      }),
       {
         loading: "Testing workflow ...",
-        success: "Raided stream",
+        success(data) {
+          update_logs(data.node_responses);
+          // check for errors
+          const error = data.node_responses.find((node) => node.status === "error");
+          const warning = data.node_responses.find((node) => node.status === "warning");
+
+          if (error) {
+            return (
+              <div className="flex items-center">
+                <MdError size={20} />
+                <span className="ml-2">Workflow completed with errors</span>
+              </div>
+            );
+          }
+
+          if (warning) {
+            return (
+              <div className="flex items-center">
+                <IoIosWarning size={20} />
+                <span className="ml-2">Workflow completed with warnings</span>
+              </div>
+            );
+          }
+
+          return "Workflow test successful";
+        },
 
         error(error) {
-          update_logs(error.response.data.node_errors, error.response.data.responseData);
-          return (
-            <div className="flex items-center">
-              <span>{error.response.data.message}</span>
-              <Button variant="link" className="ml-2" onClick={() => {}}>
-                View Logs
-              </Button>
-            </div>
-          );
+          return "Could not trigger workflow";
         },
       }
     );

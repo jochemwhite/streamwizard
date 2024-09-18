@@ -133,7 +133,7 @@ const editorReducer = (state: EditorState = initialState, action: EditorActions)
 
         editor: {
           ...state.editor,
-          logs: [...state.editor.logs, action.payload.logs],
+          logs: action.payload.logs,
           
         },
       };

@@ -68,7 +68,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         const payload = {
           aud: "authenticated",
-          exp: Math.floor(new Date(session.expires).getTime() / 1000),
+          ekuxp: Math.floor(new Date(session.expires).getTime() / 1000),
           sub: token.sub,
           email: token.email,
           role: "authenticated",
@@ -96,9 +96,12 @@ async function checkTwitchSubscriptions(user_id: string): Promise<boolean> {
       },
     });
 
+
     const subscriptions = TwitchEventSubscriptions(user_id);
 
-    const missingSubs = subscriptions.map((sub) => sub.type).filter((sub) => !res.data.data.some((data) => data.type === sub));
+    const missingSubs = subscriptions.map((sub) => sub.type).filter((sub) => !res.data.data.some((data) => data.type === sub && data.transport.conduit_id === env.CONDUIT_ID));
+
+    console.log(missingSubs);
 
     if (missingSubs.length > 0) {
       await Promise.all(

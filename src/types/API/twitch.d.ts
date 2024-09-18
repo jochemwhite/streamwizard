@@ -150,11 +150,12 @@ type SubscriptionStatus =
   | 'websocket_network_error';
 
 interface Transport {
-  method: 'webhook' | 'websocket';
+  method: 'webhook' | 'websocket' | 'conduit'
   callback?: string; // Included only if method is set to 'webhook'
   session_id?: string; // Included only if method is set to 'websocket'
   connected_at?: string; // Included only if method is set to 'websocket'
   disconnected_at?: string; // Included only if method is set to 'websocket'
+  conduit_id?: string; // Included only if method is set to 'conduit'
 }
 
 interface Pagination {

@@ -372,7 +372,15 @@ export type Database = {
           refresh_token?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "twitch_integration_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_integrations: {
         Row: {
@@ -473,6 +481,7 @@ export type Database = {
           event_id: string | null
           event_type: string | null
           id: string
+          user_id: string
           workflow: string
         }
         Insert: {
@@ -480,6 +489,7 @@ export type Database = {
           event_id?: string | null
           event_type?: string | null
           id?: string
+          user_id: string
           workflow: string
         }
         Update: {
@@ -487,9 +497,17 @@ export type Database = {
           event_id?: string | null
           event_type?: string | null
           id?: string
+          user_id?: string
           workflow?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "workflow_triggers_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "workflow_triggers_workflow_fkey"
             columns: ["workflow"]
@@ -501,13 +519,11 @@ export type Database = {
       }
       workflows: {
         Row: {
-          channel_id: string | null
+          broadcaster_id: string | null
+          created_at: string | null
           cronpath: string | null
           description: string
-          discordtemplate: string | null
           edges: string | null
-          event_type: string | null
-          flowpath: string | null
           id: string
           name: string
           nodes: string | null
@@ -515,13 +531,11 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
-          channel_id?: string | null
+          broadcaster_id?: string | null
+          created_at?: string | null
           cronpath?: string | null
           description: string
-          discordtemplate?: string | null
           edges?: string | null
-          event_type?: string | null
-          flowpath?: string | null
           id?: string
           name: string
           nodes?: string | null
@@ -529,13 +543,11 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
-          channel_id?: string | null
+          broadcaster_id?: string | null
+          created_at?: string | null
           cronpath?: string | null
           description?: string
-          discordtemplate?: string | null
           edges?: string | null
-          event_type?: string | null
-          flowpath?: string | null
           id?: string
           name?: string
           nodes?: string | null

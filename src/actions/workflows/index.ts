@@ -49,23 +49,6 @@ export const onFlowPublish = async (workflowId: string, state: boolean) => {
   return "Workflow unpublished";
 };
 
-export const onCreateNodeTemplate = async (content: string, type: string, workflowId: string) => {
-  const session = await auth();
-
-  const supabase = createClient(session?.supabaseAccessToken as string);
-  if (type === "Discord") {
-    const { data, error } = await supabase.from("workflows").update({ discordtemplate: content }).match({ id: workflowId });
-
-    if (error) {
-      return error.message;
-    }
-
-    if (data) {
-      return "Discord template saved";
-    }
-  }
-};
-
 export const onCreateWorkflow = async (name: string, description: string) => {
   const session = await auth();
 
@@ -73,7 +56,7 @@ export const onCreateWorkflow = async (name: string, description: string) => {
 
   if (session) {
     //create new workflow
-    const workflow = await supabase.from("workflows").insert({ user_id: session?.user.id, name, description }).select("*").single();
+    const workflow = await supabase.from("workflows").insert({ user_id: session?.user.id, name, description, broadcaster_id: session?.user.broadcaster_id }).select("*").single();
 
     if (workflow.error || !workflow.data) {
       console.error(workflow.error);
@@ -89,6 +72,8 @@ export const onCreateWorkflow = async (name: string, description: string) => {
 export const SaveWorkflow = async (flowId: string, nodes: string, edges: string) => {
   const session = await auth();
 
+  const broadcaster_id = session?.user.broadcaster_id;
+
   const supabase = createClient(session?.supabaseAccessToken as string);
 
   const trigger = JSON.parse(nodes)
@@ -97,7 +82,7 @@ export const SaveWorkflow = async (flowId: string, nodes: string, edges: string)
 
   if (!trigger) return { error: "Trigger not found" };
 
-  const { data, error } = await supabase.from("workflows").update({ nodes, edges }).match({ id: flowId });
+  const { data, error } = await supabase.from("workflows").update({ nodes, edges, broadcaster_id }).match({ id: flowId });
 
   if (error) return error;
 
