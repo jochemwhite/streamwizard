@@ -1,48 +1,172 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm, ControllerRenderProps, FieldValues } from "react-hook-form";
+import * as z from "zod";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Calendar } from "@/components/ui/calendar";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 import TwitchCategorySearch from "../search-bars/twitch-category-search";
+import TwitchSearchBar from "../search-bars/twitch-search-bar";
 
-interface FilterFormProps {
-  gameId?: string;
-  creatorName?: string;
-  isFeatured?: boolean;
+const formSchema = z.object({
+  game_id: z.string().optional(),
+  creator_id: z.string().optional(),
+  start_date: z.string().optional(),
+  end_date: z.string().optional(),
+  isFeatured: z.boolean().default(false),
+  searchQuery: z.string().optional(),
+});
+
+type FormValues = z.infer<typeof formSchema>;
+
+interface DatePickerFormFieldProps {
+  control: any;
+  name: "start_date" | "end_date";
+  label: string;
 }
 
-export default function FilterForm({ gameId, creatorName, isFeatured }: FilterFormProps) {
-  const router = useRouter();
-  const [gameIdInput, setGameIdInput] = useState(gameId || "");
-  const [creatorNameInput, setCreatorNameInput] = useState(creatorName || "");
-  const [isFeaturedInput, setIsFeaturedInput] = useState(isFeatured || false);
+function DatePickerFormField({ control, name, label }: DatePickerFormFieldProps) {
+  return (
+    <FormField
+      control={control}
+      name={name}
+      render={({ field }: { field: ControllerRenderProps<FieldValues, typeof name> }) => (
+        <FormItem className="flex flex-col justify-center">
+          <FormLabel>{label}</FormLabel>
+          <Popover>
+            <PopoverTrigger asChild>
+              <FormControl>
+                <Button variant={"outline"} className={cn("w-full pl-3 text-left font-normal space-y-0", !field.value && "text-muted-foreground")}>
+                  {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
+                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                </Button>
+              </FormControl>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                mode="single"
+                selected={new Date(field.value)}
+                onSelect={(e) => field.onChange(e?.toISOString())}
+                disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+                initialFocus
+              />
+            </PopoverContent>
+          </Popover>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  );
+}
 
-  const handleFilter = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+export default function TwitchClipSearchForm() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      game_id: searchParams.get("game_id") || "",
+      creator_id: searchParams.get("creator_id") || "",
+      start_date: searchParams.get("start_date") || "",
+      end_date: searchParams.get("end_date") || "",
+      isFeatured: searchParams.get("isFeatured") === "true",
+      searchQuery: searchParams.get("search_query") || "",
+    },
+  });
+
+  function onSubmit(values: FormValues) {
     const params = new URLSearchParams();
-    if (gameIdInput) params.append("game_id", gameIdInput);
-    if (creatorNameInput) params.append("creator_name", creatorNameInput);
-    if (isFeaturedInput) params.append("is_featured", String(isFeaturedInput));
+    if (values.game_id) params.set("game_id", values.game_id);
+    if (values.creator_id) params.set("creator_id", values.creator_id);
+    if (values.start_date) params.set("start_date", values.start_date);
+    if (values.end_date) params.set("end_date", values.end_date);
+    if (values.isFeatured) params.set("is_featured", "true");
+    if (values.searchQuery) params.set("search_query", values.searchQuery);
 
     router.push(`?${params.toString()}`);
-  };
+  }
 
   return (
-    <form onSubmit={handleFilter} className="flex gap-4 mb-4">
-      <TwitchCategorySearch onSelect={(game_id) => setGameIdInput(game_id)} />
-      <input
-        type="text"
-        placeholder="Search by Creator Name"
-        value={creatorNameInput}
-        onChange={(e) => setCreatorNameInput(e.target.value)}
-        className="border px-2 py-1 rounded"
-      />
-      <label className="flex items-center">
-        <input type="checkbox" checked={isFeaturedInput} onChange={(e) => setIsFeaturedInput(e.target.checked)} className="mr-2" />
-        Featured Only
-      </label>
-      <button type="submit" className="bg-blue-500 text-white px-4 py-1 rounded">
-        Apply Filters
-      </button>
-    </form>
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit, console.error)} className="space-y-8 w-full mx-auto p-4 flex flex-col justify-between items-end">
+        <FormField
+          control={form.control}
+          name="searchQuery"
+          render={({ field }) => (
+            <FormItem className="w-full">
+              <FormLabel>Search Query</FormLabel>
+              <FormControl>
+                <Input placeholder="Enter search query" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <div className="flex gap-4 justify-between w-full items-end">
+          <FormField
+            control={form.control}
+            name="game_id"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormLabel>Twitch Category</FormLabel>
+                <FormControl>
+                  <TwitchCategorySearch placeholder="Enter Twitch category" onSelect={(category) => field.onChange(category)} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="creator_id"
+            render={({ field }) => (
+              <FormItem className="w-full">
+                <FormLabel>Clipped by</FormLabel>
+                <FormControl>
+                  <TwitchSearchBar placeholder="Enter Twitch category" onSelect={(channel) => field.onChange(channel.id)} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <DatePickerFormField control={form.control} name="start_date" label="Start Date" />
+          <DatePickerFormField control={form.control} name="end_date" label="End Date" />
+          <FormField
+            control={form.control}
+            name="isFeatured"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-2 w-full">
+                <FormControl>
+                  <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                </FormControl>
+                <div className="space-y-1 leading-none">
+                  <FormLabel>Is Featured</FormLabel>
+                </div>
+              </FormItem>
+            )}
+          />
+        </div>
+
+        <Button type="submit" className="w-full">
+          Search
+        </Button>
+        <Button type="button" variant={"outline"} onClick={() => {
+          form.reset();
+          router.push("?");
+        }} className="w-full">
+          reset filters
+        </Button>
+      </form>
+    </Form>
   );
 }

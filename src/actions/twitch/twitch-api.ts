@@ -35,6 +35,9 @@ export async function searchChatter(value: string, first: number = 10) {
         query: value,
         first: first,
       },
+      headers: {
+        Authorization: `Bearer ${data.access_token}`,
+      },
 
       broadcasterID: +data.twitch_user_id,
     });
@@ -220,7 +223,10 @@ export async function SyncBroadcasterClips() {
           first: batchSize,
           after: cursor ? cursor : undefined,
         },
-        broadcasterID: +data.twitch_user_id,
+        headers: {
+          Authorization: `Bearer ${data.access_token}`,
+          broadcasterID: +data.twitch_user_id,
+        },
       });
 
       const { data: clips, pagination } = response.data;
@@ -285,12 +291,21 @@ export async function SyncBroadcasterClips() {
 }
 
 export async function searchTwitchCategories(broadcaster_id: string, query: string, first: number = 10) {
-  // get broadcaster_id
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("integrations_twitch").select("access_token, twitch_user_id").single();
+  if (error) {
+    console.error("Tokens not found");
+    return null;
+  }
+
 
   const response = await TwitchAPI.get<SearchCategories>("/search/categories", {
     params: {
       first: first,
       query: query,
+    },
+    headers: {
+      Authorization: `Bearer ${data.access_token}`,
     },
     broadcasterID: +broadcaster_id,
   });

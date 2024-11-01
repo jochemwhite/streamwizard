@@ -14,7 +14,7 @@ const TwitchAPI = axios.create({
 
 TwitchAPI.interceptors.request.use(
   (config) => {
-    // Assuming you have a method to get the current token...]
+    
 
     return config;
   },
